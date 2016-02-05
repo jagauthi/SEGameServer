@@ -51,7 +51,7 @@ public class Handler extends Thread {
                 // Now that a successful name has been chosen, add the
                 // socket's print writer to the set of all writers so
                 // this client can receive broadcast messages.
-                System.out.println("NAMEACCEPTED");
+                out.println("NAMEACCEPTED");
                 ChatServer.writers.add(out);
 
                 // Accept messages from this client and broadcast them.

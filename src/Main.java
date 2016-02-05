@@ -19,6 +19,9 @@ public class Main {
 	*/
 	public static void main(String[] args) throws Exception {
         System.out.println("The chat server is running.");
+        java.net.InetAddress addr = java.net.InetAddress.getLocalHost();
+        System.out.println(addr.getHostName());
+        
         ServerSocket listener = new ServerSocket(ChatServer.PORT);
         try {
             while (true) {
