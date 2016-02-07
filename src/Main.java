@@ -18,6 +18,8 @@ public class Main {
 	 *	method running the server until the program terminates
 	*/
 	public static void main(String[] args) throws Exception {
+	java.net.InetAddress addr = InetAddress.getLocalHost();
+        System.out.println(addr.getHostName());
         System.out.println("The chat server is running.");
         java.net.InetAddress addr = java.net.InetAddress.getLocalHost();
         System.out.println(addr.getHostName());
