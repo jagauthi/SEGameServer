@@ -53,6 +53,7 @@ public class Handler extends Thread {
                 // Ignore other clients that cannot be broadcasted to.
                 while (true) {
                     String input = in.readLine();
+                    System.out.println(input);
                     if (input == null) {
                         return;
                     }
