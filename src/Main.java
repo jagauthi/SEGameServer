@@ -1,5 +1,6 @@
-
 public class Main {
+	
+	static DatabaseConnector db; 
 	
 	public Main(){
 		
@@ -8,6 +9,6 @@ public class Main {
 	public static void main(String[] args) throws Exception {
         ChatServer cs = new ChatServer();
         cs.start();
-        new DatabaseConnector();
+        db = new DatabaseConnector();
     }
 }
