@@ -57,6 +57,22 @@ public class Handler extends Thread {
                     if (input == null) {
                         return;
                     }
+                    String[] tokens = input.split(":");
+                    String errCode;
+                    switch(tokens[0]){
+                    case "LOGIN":
+                    	errCode = Main.db.loginAttempt(tokens[1], tokens[2]);
+                    	//writers.
+                    	out.println(errCode);
+                    	/*for (PrintWriter writer : writers) {
+                    		
+                            writer.println(errCode);
+                        }*/
+                    	break;
+                    default:
+                    	System.out.println("somethings wrong");
+                    	break;
+                    }
                     for (PrintWriter writer : writers) {
                         writer.println("MESSAGE " + name + ": " + input);
                     }
