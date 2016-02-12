@@ -71,6 +71,47 @@ public class DatabaseConnector {
 	}
 	
 
+	//lockAccount(String username, int lockedStatus)
+	
+	//getAccountInfo(String username)
+	
+	//banAccount(String username, int bannedStatus)
+	
+	//forgotPassword(String username )
+	
+	//deleteCharacter()
+	
+	//updateCharInfo()
+	
+	//updateCharInventory()
+	
+	//createClan()
+	
+	//addFriendToClan()
+	
+	//dispellFriend()
+	
+	//leaveClan()
+	
+	//joinClan()
+	
+	//createGroup()
+	
+	//inviteToGroup()
+	
+	//leaveGroup()
+	
+	//joinGroup()
+	
+	//generateEncounter()
+	
+	//generateLoot()
+
+	//this method will create random items and add them to the itemTableOfPowah
+	//generateRandomItem()
+	
+	
+	
 	//returns a String as errorCode that lets the calling method know the results of the attempt
 	//based on a convention that is yet to be determined
 	public String loginAttempt(String username, String password){
@@ -351,6 +392,100 @@ public class DatabaseConnector {
 	    }
 		
 		return errorCode;
+	}
+	
+	public String updateAccount(String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2)
+	{
+		String errorCode = "";
+
+		//we need to add code to prevent SQL injection attacks
+		String sql;
+		ResultSet rs;
+		
+		try {
+			
+			//Check to make sure that the account name does not already exist.
+			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
+			rs = stmt.executeQuery(sql);
+
+			int numResults = 0;
+			while( rs.next() )
+			{
+				numResults++;
+			}
+			rs.beforeFirst();
+			rs.next();
+			System.out.println("Before update statement, numResults = " + numResults);
+			if( numResults == 0){
+				errorCode="Account does NOT exist with Username :" + username;
+				System.out.println(errorCode);
+				rs.close();
+				return errorCode;
+			}
+//			
+//			UPDATE table_name
+//			SET column1=value1,column2=value2,...
+//			WHERE some_column=some_value;
+//			
+			
+			sql = "UPDATE AccountTable set password = \'" + password + "\', email = \'" + email + "\', securityQuestion1 = \'" + securityQuestion1 + "\', securityAnswer1 = \'" + securityAnswer1 + "\', securityQuestion2 = \'" + securityQuestion2 + "\', securityAnswer2 = \'" + securityAnswer2 + "\' WHERE username = \'" + username + "\';";
+			System.out.println(sql);
+			//System.exit(0);
+			int insertResult = stmt.executeUpdate(sql);
+			//System.exit(0);
+			if( insertResult == 1)
+			{
+				errorCode = "accountCreated";
+				System.out.println(errorCode);
+				rs.close();
+				return errorCode;
+			}
+			else if( insertResult > 1)
+			{
+				errorCode = "More than one account with username :" + username + " exists.  This is WRONG.";
+				System.out.println(errorCode);
+				rs.close();
+				return errorCode;
+			}
+			else if( insertResult == 0)
+			{
+				errorCode = "Failed to create account.";
+				System.out.println(errorCode);
+				rs.close();
+				return errorCode;
+			}
+			
+			
+			//The following code checks if a username exists.
+			//
+			
+//			System.out.println("insert statement result should equal 1 but is really = " + insertResult);
+//			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
+//			rs = stmt.executeQuery(sql);
+//		     
+//			numResults = 0;
+//			while( rs.next() )
+//			{
+//				numResults++;
+//			}
+//			rs.beforeFirst();
+//			rs.next();
+//			System.out.println("numResults = " + numResults);
+
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("create account attempt completed");
+	    }
+		System.out.println(errorCode + "and reached final return statement of the account creation method...  weird...");
+		return errorCode;
+
 	}
 	
 	public String createAccount(String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2)
