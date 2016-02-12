@@ -63,12 +63,30 @@ public class Handler extends Thread {
                     case "LOGIN":
                     	errCode = Main.db.loginAttempt(tokens[1], tokens[2]);
                     	//writers.
-                    	out.println(errCode);
-                    	/*for (PrintWriter writer : writers) {
-                    		
-                            writer.println(errCode);
-                        }*/
+                    	//sends results of loginAttempt... should be "loginSuccess" for correct credentials situation
+                    	if( errCode.equals("loginSuccess"))
+                    	{
+                    		out.println(errCode + ":" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
+                    	}
+                    	else
+                    	{
+                    		out.println(errCode);	
+                    	}
+                    	errCode = Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1]));
+                    	System.out.println(errCode);
                     	break;
+                    //case "MESSAGE":
+                    case "CREATEACCOUNT":
+                    	System.out.println("calling db.createAccount() method");
+                    	errCode = Main.db.createAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
+                    	out.println(errCode);
+                    	break;
+                    
+//                    case "FORGOTPASSWORD":
+//                    	System.out.println("calling db.createAccount() method");
+//                    	errCode = Main.db.forgotPassword(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
+//                    	out.println(errCode);
+//                    	break;
                     default:
                     	System.out.println("somethings wrong");
                     	break;
