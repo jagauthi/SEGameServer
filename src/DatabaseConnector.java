@@ -128,8 +128,6 @@ public class DatabaseConnector {
 	//          if numFailedAttempts >= 3 { lock AccountAndSendEmail }
 	
 	String errorCode = "";
-	//String result = "";
-	
 	
 	//we need to add code to prevent SQL injection attacks
 	String sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
@@ -138,39 +136,37 @@ public class DatabaseConnector {
 	try {
 		
 		rs = stmt.executeQuery(sql);
-	
-	          
-	int numResults = 0;
-	while( rs.next() )
-	{
-		numResults++;
-	}
-	rs.beforeFirst();
-	rs.next();
-	System.out.println("numResults = " + numResults);
-    
-	
-	//If there is no results for the entered username
-	if ( numResults == 0 ) {
-	      System.out.println("No account found with username: " + username);
-	         rs.close();
-	      return "usernameNotFound";
-	      //Call a method that suggests the player to make a new account.
-	 }
-	
-	//check for multiple entries for same username
-	if ( numResults > 1 ) {
-		//notify admin
-		// include username and explain the possible situation of data concurrency issues....
-		System.out.println("More than one record exist with that username.");
-		return "moreThanOneAccountFound";
-	}
-	
-	if ( numResults == 1 ) {
-		System.out.println("rs.getInt(rs.findColumn(numFailedAttempts) )  = " + rs.getInt(rs.findColumn("numFailedAttempts") ));
-		if( rs.getInt(rs.findColumn("numFailedAttempts") ) >= 5  ){
-			rs.updateInt("locked", 1 );
-			
+		int numResults = 0;
+		while( rs.next() )
+		{
+			numResults++;
+		}
+		rs.beforeFirst();
+		rs.next();
+		System.out.println("numResults = " + numResults);
+	    
+		
+		//If there is no results for the entered username
+		if ( numResults == 0 ) {
+		      System.out.println("No account found with username: " + username);
+		         rs.close();
+		      return "usernameNotFound";
+		      //Call a method that suggests the player to make a new account.
+		 }
+		
+		//check for multiple entries for same username
+		if ( numResults > 1 ) {
+			//notify admin
+			// include username and explain the possible situation of data concurrency issues....
+			System.out.println("More than one record exist with that username.");
+			return "moreThanOneAccountFound";
+		}
+		
+		if ( numResults == 1 ) {
+			System.out.println("rs.getInt(rs.findColumn(numFailedAttempts) )  = " + rs.getInt(rs.findColumn("numFailedAttempts") ));
+			if( rs.getInt(rs.findColumn("numFailedAttempts") ) >= 5  ){
+				rs.updateInt("locked", 1 );
+				
 		}
 			
 			
@@ -320,6 +316,10 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
+	//Needs to be implemented.
+	//The code that is in this method has just been copied and pasted from another method
+	//as a place to start...  
+	//This method is broken and unusable.
 	public String getCharInfo(String accountID)
 	{
 		String charInfo = "defaultValue";  //This will be returned;
@@ -357,6 +357,8 @@ public class DatabaseConnector {
 		return charInfo;
 	}
 	
+	//This method should be treated as a "insert a row to the char table with whatever info I feed it
+	//and don't do ANY error checking" method. :)
 	public String createChar(String charName, String accountID , String charClass, String gender, String str, String dex, String con, String charStatInt, String wil, String luck)
 	{
 		String errorCode = "dunnoYet";
@@ -422,12 +424,13 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
-//			
+			
+//			The following comments are an example of a SQL update statement.
+			
 //			UPDATE table_name
 //			SET column1=value1,column2=value2,...
 //			WHERE some_column=some_value;
 //			
-			
 			sql = "UPDATE AccountTable set password = \'" + password + "\', email = \'" + email + "\', securityQuestion1 = \'" + securityQuestion1 + "\', securityAnswer1 = \'" + securityAnswer1 + "\', securityQuestion2 = \'" + securityQuestion2 + "\', securityAnswer2 = \'" + securityAnswer2 + "\' WHERE username = \'" + username + "\';";
 			System.out.println(sql);
 			//System.exit(0);
@@ -435,7 +438,7 @@ public class DatabaseConnector {
 			//System.exit(0);
 			if( insertResult == 1)
 			{
-				errorCode = "accountCreated";
+				errorCode = "accountUpdated";
 				System.out.println(errorCode);
 				rs.close();
 				return errorCode;
@@ -449,29 +452,11 @@ public class DatabaseConnector {
 			}
 			else if( insertResult == 0)
 			{
-				errorCode = "Failed to create account.";
+				errorCode = "Failed to locate account.";
 				System.out.println(errorCode);
 				rs.close();
 				return errorCode;
 			}
-			
-			
-			//The following code checks if a username exists.
-			//
-			
-//			System.out.println("insert statement result should equal 1 but is really = " + insertResult);
-//			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
-//			rs = stmt.executeQuery(sql);
-//		     
-//			numResults = 0;
-//			while( rs.next() )
-//			{
-//				numResults++;
-//			}
-//			rs.beforeFirst();
-//			rs.next();
-//			System.out.println("numResults = " + numResults);
-
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -485,19 +470,19 @@ public class DatabaseConnector {
 	    }
 		System.out.println(errorCode + "and reached final return statement of the account creation method...  weird...");
 		return errorCode;
-
 	}
 	
+	//This method checks if an account already exists with the same name.
+	//If there is not already an account, it performs an INSERT statement to the AccountTable.
+	//All parameters should be scrubbed for SQL injection attacks prior to being used
+	//in this method.
 	public String createAccount(String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2)
 	{
 		String errorCode = "";
-
 		//we need to add code to prevent SQL injection attacks
 		String sql;
-		ResultSet rs;
-		
-		try {
-			
+		ResultSet rs;		
+		try {	
 			//Check to make sure that the account name does not already exist.
 			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
 			rs = stmt.executeQuery(sql);
@@ -516,7 +501,6 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
-			
 			sql = "INSERT INTO AccountTable (username, password, email, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2 )  VALUES ( \'" + username + "\', \'" + password + "\', \'" + email + "\', \'" + securityQuestion1 + "\', \'" + securityAnswer1 + "\', \'" + securityQuestion2 + "\', \'" + securityAnswer2 + "\') ;";
 			int insertResult = stmt.executeUpdate(sql);
 			if( insertResult == 1)
@@ -540,24 +524,6 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
-			
-			
-			//The following code checks if a username exists.
-			//
-			
-//			System.out.println("insert statement result should equal 1 but is really = " + insertResult);
-//			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
-//			rs = stmt.executeQuery(sql);
-//		     
-//			numResults = 0;
-//			while( rs.next() )
-//			{
-//				numResults++;
-//			}
-//			rs.beforeFirst();
-//			rs.next();
-//			System.out.println("numResults = " + numResults);
-
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -573,5 +539,3 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 }
-
-
