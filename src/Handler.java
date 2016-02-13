@@ -72,8 +72,8 @@ public class Handler extends Thread {
                     	{
                     		out.println(errCode);	
                     	}
-                    	errCode = Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1]));
-                    	System.out.println(errCode);
+                    	
+                    	System.out.println("Login result errCode =  " + errCode);
                     	break;
                     //case "MESSAGE":
                     case "CREATEACCOUNT":
@@ -81,6 +81,10 @@ public class Handler extends Thread {
                     	errCode = Main.db.createAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
                     	out.println(errCode);
                     	break;
+//                    case "TESTLOGOUT":
+//                    	names.remove(tokens[1]);
+//                    	System.out.println("Removed the chat name : " + tokens[1]);
+//                    	break;
                     
 //                    case "FORGOTPASSWORD":
 //                    	System.out.println("calling db.createAccount() method");
