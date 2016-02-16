@@ -66,7 +66,7 @@ public class Handler extends Thread {
                     	//sends results of loginAttempt... should be "loginSuccess" for correct credentials situation
                     	if( errCode.equals("loginSuccess"))
                     	{
-                    		out.println(errCode + ":" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
+                    		out.println(errCode + ":" + Main.db.getAccountID(tokens[1]) + ":" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
                     	}
                     	else
                     	{
