@@ -362,18 +362,39 @@ public class DatabaseConnector {
 		return charInfo;
 	}
 	
-	public String createChar(String charName, String accountID , String charClass, String gender, String str, String dex, String con, String charStatInt, String wil, String luck)
+	public String createChar(String charName, int accountID , String charClass, String gender, String str, String dex, String con, String charStatInt, String wil, String luck)
 	{
 		String errorCode = "dunnoYet";
 		ResultSet rs;
-		int mana;
+		String initialAbilities = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		String initialCooldown  = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		int mana =0;
+		int health =0;
 		if( charClass.equals("Mage"))
 		{
-			mana = 20;
+			mana = Integer.parseInt(charStatInt) * 3 ;
+			health = Integer.parseInt(con);
 		}
-		else mana = 0;
-		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems, strength, dexterity, constitution,  intelligence, willpower, luck) "
-				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" +str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\') ;";
+		else if( charClass.equals("Rogue"))
+		{
+			mana = Integer.parseInt(charStatInt) * 2 ;
+			health = Integer.parseInt(con) * 2 ;
+			
+		}
+		else 
+		{
+			mana = Integer.parseInt(charStatInt);
+			health = Integer.parseInt(con) * 3 ;
+		}
+		
+		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" 
+				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\'," + initialAbilities + "\', \'" + initialCooldown + ") ;";
 		System.out.println(sql);
 		try
 		{
@@ -396,20 +417,27 @@ public class DatabaseConnector {
 			      
 			      //Call a method that suggests the player to make a new account.
 			 }
-			
-			//check for multiple entries for same username
-			if ( numResults == 1 ) {
+			//check for existing char name
+			else if ( numResults == 1 ) {
 				//notify admin
 				// include username and explain the possible situation of data concurrency issues....
 				System.out.println("Charname already used...");
 				rs.close();
 				return "charNameAlreadyInUse";
 			}
+			else
+				return "twoRowsWithSameCharNameFoundWTF";
 			
 			int insertResult = stmt.executeUpdate(sql);
 			if( insertResult == 1)
 			{
-				errorCode = "Unique Char created.";
+				sql = "INSERT INTO CharacterInventoryTable (characterName) VALUES ( \'" + charName + "\' );";
+				insertResult = stmt.executeUpdate(sql);
+				//If we get more than one row returned from the insert statement to the inventory table...
+				if(insertResult != 1)
+					errorCode = "charCreatedInventoryError";
+				else //otherwise, everything went perfectly and we return the appropriate error code.  Rejoicing is implied.
+					errorCode = "charCreatedInventorySuccess";
 				System.out.println(errorCode);
 				//rs.close();
 				return errorCode;
@@ -489,24 +517,6 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
-			
-			
-			//The following code checks if a username exists.
-			//
-			
-//			System.out.println("insert statement result should equal 1 but is really = " + insertResult);
-//			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
-//			rs = stmt.executeQuery(sql);
-//		     
-//			numResults = 0;
-//			while( rs.next() )
-//			{
-//				numResults++;
-//			}
-//			rs.beforeFirst();
-//			rs.next();
-//			System.out.println("numResults = " + numResults);
-
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -516,7 +526,7 @@ public class DatabaseConnector {
 	    }
 	    finally
 	    {  
-	       System.out.println("create account attempt completed");
+	       System.out.println("update account attempt completed");
 	    }
 		System.out.println(errorCode + "and reached final return statement of the account creation method...  weird...");
 		return errorCode;
@@ -575,29 +585,13 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
-			
-			
-			//The following code checks if a username exists.
-			//
-			
-//			System.out.println("insert statement result should equal 1 but is really = " + insertResult);
-//			sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
-//			rs = stmt.executeQuery(sql);
-//		     
-//			numResults = 0;
-//			while( rs.next() )
-//			{
-//				numResults++;
-//			}
-//			rs.beforeFirst();
-//			rs.next();
-//			System.out.println("numResults = " + numResults);
-
 		} 
-	    catch (SQLException e) {
+	    catch (SQLException e) 
+		{
 	       e.printStackTrace();
 	    }
-	    catch (Exception e) {
+	    catch (Exception e) 
+		{
 	        e.printStackTrace();
 	    }
 	    finally
@@ -608,3 +602,5 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 }
+
+
