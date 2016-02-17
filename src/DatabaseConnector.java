@@ -71,6 +71,19 @@ public class DatabaseConnector {
 	}
 	
 
+	//Starting point for encryption of passwords : I am going to add a salt field to the userAccountTable
+	//and use that salt value along with the entered password as the hash preimage for a hash function.
+	//I will then store the resulting hash value in the password field.  This seems like a secure 
+	//way of storing passwords that also mitigates dictionary attacks and eliminates the need to 
+	//sanitize the password field.
+	
+//	import java.security.MessageDigest;
+//
+//	MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+//	messageDigest.update(stringToEncrypt.getBytes());
+//	String encryptedString = new String(messageDigest.digest());
+	
+	
 	//lockAccount(String username, int lockedStatus)
 	
 	//getAccountInfo(String username)
@@ -206,6 +219,7 @@ public class DatabaseConnector {
 			if( rs.getInt(rs.findColumn("numFailedAttempts")) >= 5){
 			 //lock account and send email
 				rs.updateInt("locked", 1 );
+				rs.updateRow();
 				errorCode = "accountLocked"; 
 				System.out.println(errorCode);
 				rs.close();
@@ -325,6 +339,7 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
+	//This needs to be worked on.  
 	public String getCharInfo(String accountID)
 	{
 		String charInfo = "defaultValue";  //This will be returned;
@@ -394,7 +409,7 @@ public class DatabaseConnector {
 		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
 				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" 
-				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\'," + initialAbilities + "\', \'" + initialCooldown + ") ;";
+				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
 		{
