@@ -81,6 +81,19 @@ public class Handler extends Thread {
                     	errCode = Main.db.createAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
                     	out.println(errCode);
                     	break;
+                    case "CREATECHAR":
+                    	System.out.println("calling db.createChar() method");
+                    	errCode = Main.db.createChar(tokens[1],Integer.parseInt(tokens[2]),tokens[3],tokens[4],tokens[5],tokens[6],tokens[7], tokens[8], tokens[9], tokens[10] );
+                    	out.println(errCode );
+                    	if( errCode.equals("charCreatedInventorySuccess"))
+                    	{
+                    		out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
+                    	}
+                    	else
+                    	{
+                    		out.println(errCode);	
+                    	}
+                    	break;
 //                    case "TESTLOGOUT":
 //                    	names.remove(tokens[1]);
 //                    	System.out.println("Removed the chat name : " + tokens[1]);
