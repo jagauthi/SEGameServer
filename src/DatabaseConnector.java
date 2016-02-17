@@ -83,20 +83,21 @@ public class DatabaseConnector {
 //	messageDigest.update(stringToEncrypt.getBytes());
 //	String encryptedString = new String(messageDigest.digest());
 	
-	
+	//later admin tool
 	//lockAccount(String username, int lockedStatus)
 	
 	//getAccountInfo(String username)
 	
+	//later admin tool
 	//banAccount(String username, int bannedStatus)
 	
 	//forgotPassword(String username )
 	
 	//deleteCharacter()
 	
-	//updateCharInfo()
+
 	
-	//updateCharInventory()
+	//
 	
 	//updateChar()
 	
@@ -126,6 +127,10 @@ public class DatabaseConnector {
 
 	//this method will create random items and add them to the itemTableOfPowah
 	//generateRandomItem()
+	
+	//Send all clients updated positions of other players in their local area, as well as notifications of events.
+	//Events can include zoning, special encounters, and other stuff that we dream up later. :)
+	//broadcastGameChanges()
 	
 	
 	
@@ -614,6 +619,111 @@ public class DatabaseConnector {
 	       System.out.println("create account attempt completed");
 	    }
 		System.out.println(errorCode + "and reached final return statement of the account creation method...  weird...");
+		return errorCode;
+	}
+	
+	public String updateCharInfo(String charName, int accountID , String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String experience, String xCoord, String yCoord, String gold, String wil, String luck, String abilities, String cooldown)
+	{
+		String errorCode = "";
+		ResultSet rs;
+		String initialAbilities = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		String initialCooldown  = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		int mana =0;
+		int health =0;
+		if( charClass.equals("Mage"))
+		{
+			mana = Integer.parseInt(charStatInt) * 3 ;
+			health = Integer.parseInt(con);
+		}
+		else if( charClass.equals("Rogue"))
+		{
+			mana = Integer.parseInt(charStatInt) * 2 ;
+			health = Integer.parseInt(con) * 2 ;
+			
+		}
+		else 
+		{
+			mana = Integer.parseInt(charStatInt);
+			health = Integer.parseInt(con) * 3 ;
+		}
+		String sql = "UPDATE CharacterInfoTable set class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender + "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience +  "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\',  gold = \'" + gold + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
+		
+//		sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+//				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+//				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" 
+//				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
+		System.out.println(sql);
+		try
+		{
+			String sqlCheck = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sqlCheck);
+			int numResults = 0;
+			while( rs.next() )
+			{
+				numResults++;
+			}
+			rs.beforeFirst();
+			rs.next();
+			System.out.println("char's with name before insert...  numResults = " + numResults);
+		    
+			
+			//If there is no results for the entered charName
+			if ( numResults == 0 ) {
+			      System.out.println("No character found with name: " + charName);
+			         rs.close();
+			      errorCode = "char name not found";
+			      return errorCode;
+			      //Call a method that suggests the player to make a new account.
+			 }
+			//check for existing char name
+			else if ( numResults == 1 ) {
+				//notify admin
+				// include username and explain the possible situation of data concurrency issues....
+				System.out.println("Charname found");
+			}
+			else {
+				rs.close();
+				return "twoRowsWithSameCharNameFoundWTF";
+			}
+			
+			int insertResult = stmt.executeUpdate(sql);
+			if( insertResult == 1)
+			{
+				errorCode = "char updated successfully";
+				rs.close();
+				return errorCode;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("update character attempt completed");
+	    }
+		
+		return errorCode;
+	}
+	
+	public String updateCharInventory(String charName, String equippedItems, String[] inventorySlots) {
+		String errorCode = "";
+		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\' ";
+		for(int i = 0; i < 20; i++)
+		{
+			String fieldName = "inventorySlot" + (i+1);
+			sql += ", " + fieldName + " = " + inventorySlots[i] + " ";
+		}
+		sql += "WHERE charName = \'" + charName + "\';";
+		
+		System.out.println(sql);
+		
 		return errorCode;
 	}
 }
