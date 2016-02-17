@@ -84,7 +84,7 @@ public class Handler extends Thread {
                     case "CREATECHAR":
                     	System.out.println("calling db.createChar() method");
                     	errCode = Main.db.createChar(tokens[1],Integer.parseInt(tokens[2]),tokens[3],tokens[4],tokens[5],tokens[6],tokens[7], tokens[8], tokens[9], tokens[10] );
-                    	out.println(errCode );
+                    	//out.println(errCode );
                     	if( errCode.equals("charCreatedInventorySuccess"))
                     	{
                     		out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
