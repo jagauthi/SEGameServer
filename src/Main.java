@@ -11,9 +11,11 @@ public class Main {
         ChatServer cs = new ChatServer();
         cs.start();
         db = new DatabaseConnector();
+        
+        new Launcher();
     
         //testing code below this line...
-       //db.updateAccount("otherAccountNum79","newPass", "realemail@email.not", "securityQuestion1", "securityAnswer1", "securityQuestion2", "securityAnswer2");
+    //db.updateAccount("jagauthi","newPass", "realemail@email.not", "securityQuestion1", "securityAnswer1", "securityQuestion2", "securityAnswer2");
         //db.getAccountID("otherAccountNum79");
      //db.createChar("Anone", "42", "Warrior", "Male", "38", "10", "20", "1", "1", "10");
      //db.createChar("Arinde", "42", "Rogue", "Male", "10", "30", "20", "1", "1", "18");
@@ -25,6 +27,6 @@ public class Main {
         	inventorySlots[i] = "00:00";
         }
         //db.updateCharInfo("Gilsani", 1, "Mage", "2", "Male", "20", "20", "20", "200", "20", "20", "20", "20", "20", "20", "20", "20");
-        db.updateCharInventory("Gilsani", equippedItems, inventorySlots);
+        //db.updateCharInventory("Gilsani", equippedItems, inventorySlots);
     }
 }
