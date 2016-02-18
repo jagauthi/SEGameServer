@@ -47,6 +47,7 @@ public class Launcher{
     private JPanel serverMenuPanel;
     private JPanel createAccountPanel;
     private JPanel charSelectPanel;
+    private JPanel mainPanel;
 
     //Text fields
     private JTextField accountNameText;
@@ -84,7 +85,8 @@ public class Launcher{
 		serverMenuPanel = new JPanel();
 		createAccountPanel = new JPanel();
 		charSelectPanel = new JPanel();
-
+		mainPanel = new JPanel();
+		
 		initConnectPanel();
 		initServerMenuPanel();
 		initCreateAccountPanel();
@@ -94,6 +96,7 @@ public class Launcher{
 		cards.add(serverMenuPanel, "Server Menu Panel");
 		cards.add(createAccountPanel, "Create Account Panel");
 		cards.add(charSelectPanel, "Char Select Panel");
+		cards.add(mainPanel, "Main Panel");
         
         frame.add(cards, BorderLayout.CENTER);
         
@@ -168,7 +171,8 @@ public class Launcher{
         InetAddress addr;
 		try {
 			addr = InetAddress.getLocalHost();
-			 serverHostnameLabel.setText("Server Hostname : " + addr);
+			 //serverHostnameLabel.setText("Server Hostname : " + addr);
+			serverHostnameLabel.setText("test");
 		       
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -178,21 +182,23 @@ public class Launcher{
 		accountNameText.setPreferredSize(new Dimension(200, 40));
 		characterNameText.setPreferredSize(new Dimension(200, 40));
 		
-		placeHolder.setPreferredSize(new Dimension(200, 40));
+		JPanel placeholderPanel = new JPanel(new GridBagLayout());
+		placeHolder.setPreferredSize(new Dimension(200, 400));
+		
+        GridBagConstraints conts = new GridBagConstraints();
+        conts.fill = GridBagConstraints.VERTICAL;
+        conts.gridx = 0;
+        conts.gridy = 0;
+        placeholderPanel.add(placeHolder, conts);
+        placeholderPanel.setBorder(BorderFactory.createTitledBorder("Placeholder Border"));
+        placeholderPanel.setPreferredSize(new Dimension(200, 400));
+        
 		//placeHolder.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		//placeHolder.setName("This is placeHolder, our happy panel that can't be found.");
         
         
         NetworkMonitor.setText("Network Monitor");
         
-//        loginButton.setPreferredSize(new Dimension(100, 50));
-//        loginButton.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                logIn(evt);
-//            }
-//        });
-        //createAccountButton.setPreferredSize(newDimension(100, 50));
-        //go.addActionListener(n)
         
         go.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -212,11 +218,10 @@ public class Launcher{
             }
         });
         
+        JPanel serverMenuPanel = new JPanel();
         serverMenuPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.NONE;
-        
-        
         
         c.gridx = 0;
         c.gridy = 0;
@@ -226,11 +231,13 @@ public class Launcher{
         c.gridy = 1;
         serverMenuPanel.add(accountNameLabel, c);
       
-        
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
         serverMenuPanel.add(accountNameText, c);
         
+
+        c.fill = GridBagConstraints.NONE;
         c.gridx = 2;
         c.gridy = 1;
         serverMenuPanel.add(go, c);
@@ -239,10 +246,14 @@ public class Launcher{
         c.gridy = 2;
         serverMenuPanel.add(characterNameLabel, c);
 
+
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 2;
         serverMenuPanel.add(characterNameText, c);
         
+
+        c.fill = GridBagConstraints.NONE;
         c.gridx = 2;
         c.gridy = 2;
         serverMenuPanel.add(go2, c);
@@ -266,8 +277,40 @@ public class Launcher{
         
         c.gridx = 3;
         c.gridy = 1;
+        //c.fill = GridBagConstraints.BOTH;
+        //serverMenuPanel.add(placeHolder, c);
+        //serverMenuPanel.add(placeholderPanel, c);
         
-        serverMenuPanel.add(placeHolder, c);
+        JPanel leftPanel = new JPanel(new GridBagLayout());
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        mainPanel = new JPanel(new GridBagLayout());
+        
+        GridBagConstraints constraintaroos = new GridBagConstraints();
+        constraintaroos.fill = GridBagConstraints.NONE;
+        
+        constraintaroos.gridx = 0;
+        constraintaroos.gridy = 0;
+        leftPanel.add(serverMenuPanel, constraintaroos);
+        leftPanel.setBorder(BorderFactory.createTitledBorder("Left Panel Border"));
+        leftPanel.setPreferredSize(new Dimension(500, 700));
+        
+        constraintaroos.gridx = 0;
+        constraintaroos.gridy = 0;
+        rightPanel.add(placeholderPanel, constraintaroos);
+        rightPanel.setBorder(BorderFactory.createTitledBorder("Right Panel Border"));
+        rightPanel.setPreferredSize(new Dimension(500, 700));
+        
+        constraintaroos.gridx = 0;
+        constraintaroos.gridy = 0;
+        mainPanel.add(leftPanel, constraintaroos);
+        
+        constraintaroos.gridx = 1;
+        constraintaroos.gridy = 0;
+        mainPanel.add(rightPanel, constraintaroos);
+
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Panel Border"));
+        
+        
 //        placeHolder.setBorder(BorderFactory.createTitledBorder("WhateverTest"));
 //        placeHolder.setLayout(new GridBagLayout());
 //        c = new GridBagConstraints();
@@ -515,7 +558,7 @@ public class Launcher{
 	private void goToLogin(ActionEvent evt) {
 		//Maybe check to make sure we're connected to server first, before
 		//switching over to the login screen??
-		switchCards("Server Menu Panel");
+		switchCards("Main Panel");
     }
 	
 	private void logIn(ActionEvent evt)
