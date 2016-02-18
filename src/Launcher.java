@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -21,14 +24,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
-import client_Controller.ChatClient;
+
+
 
 public class Launcher{
   
-	final int WIDTH = 600;
-	final int HEIGHT = 400;
+	final int WIDTH = 1200;
+	final int HEIGHT = 800;
 	
 	Font normalFont = new Font("Arial", Font.BOLD, 30);
 	Font bigFont = new Font("Arial", Font.BOLD, 60);
@@ -38,13 +44,17 @@ public class Launcher{
 	//Panels
 	private JPanel cards;
     private JPanel connectPanel;
-    private JPanel loginPanel;
+    private JPanel serverMenuPanel;
     private JPanel createAccountPanel;
     private JPanel charSelectPanel;
 
     //Text fields
-    private JTextField loginNameText;
+    private JTextField accountNameText;
+    private JTextField characterNameText;
     private JPasswordField loginPasswordText;
+    public JTextArea messageArea = new JTextArea(8, 40);
+    private JTextField placeHolder = new JTextField();
+  //  private JTextField loginCharacterNameText;
     
     private JTextField createNameText;
     private JTextField createEmailText;
@@ -55,7 +65,6 @@ public class Launcher{
     JComboBox secQuestions1;
     JComboBox secQuestions2;
 	
-	ChatClient client;
 	
 	//Each of the elements holds a string with
 	//info about each individual character. Each
@@ -63,23 +72,26 @@ public class Launcher{
 	//stats and stuff, and they're each separated
 	//by a space (or some other delimiter)
 	ArrayList<String> characters = new ArrayList<String>();
+	private JButton go;
+	private JButton go2;
+	private JButton NetworkMonitor;
 	
 	public Launcher(){
-		connectToServer();
+		//connectToServer();
         frame = new JFrame();
 		cards = new JPanel(new CardLayout());
 		connectPanel = new JPanel();
-		loginPanel = new JPanel();
+		serverMenuPanel = new JPanel();
 		createAccountPanel = new JPanel();
 		charSelectPanel = new JPanel();
 
 		initConnectPanel();
-		initLoginPanel();
+		initServerMenuPanel();
 		initCreateAccountPanel();
 		//initCharSelectPanel();
 		
 		cards.add(connectPanel, "Connect Panel");
-		cards.add(loginPanel, "Login Panel");
+		cards.add(serverMenuPanel, "Server Menu Panel");
 		cards.add(createAccountPanel, "Create Account Panel");
 		cards.add(charSelectPanel, "Char Select Panel");
         
@@ -114,64 +126,159 @@ public class Launcher{
         connectPanel.add(connectButton, c);
 	}
 	
-	public void initLoginPanel()
+	public void initServerMenuPanel()
 	{
-		JLabel loginNameLabel = new JLabel();
-		JLabel loginPasswordLabel = new JLabel();
-        loginNameText = new JTextField();
-        loginPasswordText = new JPasswordField();
-        JButton loginButton = new JButton();
-        JButton createAccountButton = new JButton();
+		
+		//collecting code to make the chat box
+		//JFrame frame = new JFrame("Chatter");
+	    JTextField textField = new JTextField(40);
+	    
+	    JTextArea consoleArea = new JTextArea(8,40);
+	    
+	    
+	    
+	    JLabel test = new JLabel();
+	    test.setText("Test test test");
+		
+		messageArea.setEditable(false);
+		consoleArea.setEditable(false);
+		
+		JLabel accountNameLabel = new JLabel();
+		JLabel characterNameLabel = new JLabel();
+		go = new JButton();
+		go2 = new JButton();
+		NetworkMonitor = new JButton();
+		
+		
+		accountNameText = new JTextField();
+		characterNameText = new JTextField();
+		
+		
+		//experimental code lolz
+		
+		JLabel serverHostnameLabel = new JLabel();
+		
         
-        loginNameLabel.setText("Username: ");
-        loginPasswordLabel.setText("Password: ");
-        loginNameText.setPreferredSize(new Dimension(200, 40));
-        loginPasswordText.setPreferredSize(new Dimension(200, 40));
         
-        loginButton.setText("Login!");
-        loginButton.setFont(normalFont);
-        createAccountButton.setText("Create Account");
+        accountNameLabel.setText("Username: ");
+        characterNameLabel.setText("Character Name: ");
+        go.setText("Search");
+        go2.setText("Search");
         
-        loginButton.setPreferredSize(new Dimension(100, 50));
-        loginButton.addActionListener(new java.awt.event.ActionListener() {
+        InetAddress addr;
+		try {
+			addr = InetAddress.getLocalHost();
+			 serverHostnameLabel.setText("Server Hostname : " + addr);
+		       
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+		accountNameText.setPreferredSize(new Dimension(200, 40));
+		characterNameText.setPreferredSize(new Dimension(200, 40));
+		
+		placeHolder.setPreferredSize(new Dimension(200, 40));
+		//placeHolder.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		//placeHolder.setName("This is placeHolder, our happy panel that can't be found.");
+        
+        
+        NetworkMonitor.setText("Network Monitor");
+        
+//        loginButton.setPreferredSize(new Dimension(100, 50));
+//        loginButton.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                logIn(evt);
+//            }
+//        });
+        //createAccountButton.setPreferredSize(newDimension(100, 50));
+        //go.addActionListener(n)
+        
+        go.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logIn(evt);
+                searchAccounts(evt);
             }
         });
-        //createAccountButton.setPreferredSize(newDimension(100, 50));
-        createAccountButton.addActionListener(new java.awt.event.ActionListener() {
+        
+        go2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchChars(evt);
+            }
+        });
+        
+        NetworkMonitor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 goToCreateAccount(evt);
             }
         });
         
-        loginPanel.setLayout(new GridBagLayout());
+        serverMenuPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.NONE;
         
+        
+        
         c.gridx = 0;
         c.gridy = 0;
-        loginPanel.add(loginNameLabel, c);
+        serverMenuPanel.add(serverHostnameLabel, c);
+        
+        c.gridx = 0;
+        c.gridy = 1;
+        serverMenuPanel.add(accountNameLabel, c);
+      
         
         c.gridx = 1;
-        c.gridy = 0;
-        loginPanel.add(loginNameText, c);
+        c.gridy = 1;
+        serverMenuPanel.add(accountNameText, c);
+        
+        c.gridx = 2;
+        c.gridy = 1;
+        serverMenuPanel.add(go, c);
 
         c.gridx = 0;
-        c.gridy = 1;
-        loginPanel.add(loginPasswordLabel, c);
+        c.gridy = 2;
+        serverMenuPanel.add(characterNameLabel, c);
 
         c.gridx = 1;
-        c.gridy = 1;
-        loginPanel.add(loginPasswordText, c);
+        c.gridy = 2;
+        serverMenuPanel.add(characterNameText, c);
+        
+        c.gridx = 2;
+        c.gridy = 2;
+        serverMenuPanel.add(go2, c);
 
         c.gridx = 0;
         c.gridy = 3;
-        loginPanel.add(createAccountButton, c);
+        serverMenuPanel.add(NetworkMonitor, c);
         
-        c.gridx = 1;
-        c.gridy = 2;
-        loginPanel.add(loginButton , c);
+        c.gridx = 0;
+        c.gridy = 4;
+        serverMenuPanel.add(messageArea, c);
+        
+        c.gridx = 0;
+        c.gridy = 5;
+        serverMenuPanel.add(textField, c);
+        
+        c.gridx = 0;
+        c.gridy = 6;
+        serverMenuPanel.add(consoleArea, c);
+        
+        
+        c.gridx = 3;
+        c.gridy = 1;
+        
+        serverMenuPanel.add(placeHolder, c);
+//        placeHolder.setBorder(BorderFactory.createTitledBorder("WhateverTest"));
+//        placeHolder.setLayout(new GridBagLayout());
+//        c = new GridBagConstraints();
+//        c.fill = GridBagConstraints.NONE;
+//        c.anchor = GridBagConstraints.EAST;
+//        
+//        c.gridx = 0;
+//        c.gridy = 0;
+//        placeHolder.add( test, c);
+       
+        
 	}
 	
 	public void initCreateAccountPanel()
@@ -408,29 +515,29 @@ public class Launcher{
 	private void goToLogin(ActionEvent evt) {
 		//Maybe check to make sure we're connected to server first, before
 		//switching over to the login screen??
-		switchCards("Login Panel");
+		switchCards("Server Menu Panel");
     }
 	
 	private void logIn(ActionEvent evt)
 	{
-		String username = loginNameText.getText();
-		String password = String.valueOf(loginPasswordText.getPassword());
-		if(username.equals(""))
-		{
-			loginPasswordText.setText("");
-			JOptionPane.showMessageDialog(null, "Username field is empty.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else if(password.equals(""))
-		{
-			loginNameText.setText("");
-			JOptionPane.showMessageDialog(null, "Password field is empty.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else 
-		{
-			client.sendMessage("LOGIN:" + username + ":" + password);
-		}
+//		String username = loginNameText.getText();
+//		String password = String.valueOf(loginPasswordText.getPassword());
+//		if(username.equals(""))
+//		{
+//			loginPasswordText.setText("");
+//			JOptionPane.showMessageDialog(null, "Username field is empty.", "ERROR", 
+//					JOptionPane.INFORMATION_MESSAGE);
+//		}
+//		else if(password.equals(""))
+//		{
+//			loginNameText.setText("");
+//			JOptionPane.showMessageDialog(null, "Password field is empty.", "ERROR", 
+//					JOptionPane.INFORMATION_MESSAGE);
+//		}
+//		else 
+//		{
+//			client.sendMessage("LOGIN:" + username + ":" + password);
+//		}
 	}
 	
 	private void createAccount(ActionEvent evt)
@@ -525,12 +632,12 @@ public class Launcher{
 		}
 		else 
 		{
-			client.sendMessage("CREATEACCOUNT:" + username + ":" 
-					+ email + ":" + password + ":" 
-					+ securityQuestion1 + ":" 
-					+ securityAnswer1 + ":"
-					+ securityQuestion2 + ":"
-					+ securityAnswer2);
+//			client.sendMessage("CREATEACCOUNT:" + username + ":" 
+//					+ email + ":" + password + ":" 
+//					+ securityQuestion1 + ":" 
+//					+ securityAnswer1 + ":"
+//					+ securityQuestion2 + ":"
+//					+ securityAnswer2);
 		}
 	}
 	
@@ -545,11 +652,34 @@ public class Launcher{
 		switchCards("Login Panel");
 	}
 	
+	
+	private void searchChars(ActionEvent evt)
+	{
+//		loginNameText.setText("");
+//		loginPasswordText.setText("");
+//		switchCards("Create Account Panel");
+		//this.placeHolder.setText("Test");
+		
+		placeHolder.setText(Main.db.getCharInfo(characterNameText.getText()) + "\n");
+		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
+	}
+	
+	private void searchAccounts(ActionEvent evt)
+	{
+//		loginNameText.setText("");
+//		loginPasswordText.setText("");
+//		switchCards("Create Account Panel");
+		//this.placeHolder.setText("Test");
+		
+		placeHolder.setText(Main.db.getAccountInfo(accountNameText.getText()) + "\n");
+		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
+	}
+	
 	private void goToCreateAccount(ActionEvent evt)
 	{
-		loginNameText.setText("");
-		loginPasswordText.setText("");
-		switchCards("Create Account Panel");
+//		loginNameText.setText("");
+//		loginPasswordText.setText("");
+//		switchCards("Create Account Panel");
 	}
 	
 	private void selectChar(ActionEvent evt)
@@ -562,16 +692,16 @@ public class Launcher{
 		//Create new character...
 	}
 	
-	public void connectToServer()
-	{
-		client = new ChatClient(this);
-        try {
-			client.start();
-		} 
-        catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public void connectToServer()
+//	{
+//		client = new ChatClient(this);
+//        try {
+//			client.start();
+//		} 
+//        catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void loadCharacterInfo(String[] characterList)
 	{
