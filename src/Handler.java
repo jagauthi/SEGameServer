@@ -72,13 +72,17 @@ public class Handler extends Thread {
                     	{
                     		out.println(errCode);	
                     	}
-                    	
                     	System.out.println("Login result errCode =  " + errCode);
                     	break;
                     //case "MESSAGE":
                     case "CREATEACCOUNT":
                     	System.out.println("calling db.createAccount() method");
                     	errCode = Main.db.createAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
+                    	out.println(errCode);
+                    	break;
+                    case "UPDATEACCOUNT":
+                    	System.out.println("calling db.updateAccount() method");
+                    	errCode = Main.db.updateAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
                     	out.println(errCode);
                     	break;
                     case "CREATECHAR":
@@ -94,6 +98,16 @@ public class Handler extends Thread {
                     		out.println(errCode);	
                     	}
                     	break;
+                    case "GETSECURITYINFO":
+                    	System.out.println("calling db.getAccountInfo() method");
+                    	errCode = Main.db.getAccountInfo(tokens[1]);
+                    	out.println("securityInfo:" + errCode);
+                    	break;
+                    case "LOCKACCOUNT":
+                    	System.out.println("calling db.lockAccount() method");
+                    	Main.db.lockAccount(tokens[1]);//this needs to be implemented and does not return anything
+                    	//out.println("securityInfo:" + errCode);
+                    	break;
 //                    case "TESTLOGOUT":
 //                    	names.remove(tokens[1]);
 //                    	System.out.println("Removed the chat name : " + tokens[1]);
@@ -105,12 +119,13 @@ public class Handler extends Thread {
 //                    	out.println(errCode);
 //                    	break;
                     default:
-                    	System.out.println("somethings wrong");
+                    	System.out.println("default case");
+                    	for (PrintWriter writer : writers) {
+                            writer.println("MESSAGE " + name + ": " + input);
+                        }
                     	break;
                     }
-                    for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + ": " + input);
-                    }
+                    
                 }
             } 
             catch (IOException e) {
