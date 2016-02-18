@@ -83,7 +83,7 @@ public class DatabaseConnector {
 //	messageDigest.update(stringToEncrypt.getBytes());
 //	String encryptedString = new String(messageDigest.digest());
 	
-	//later admin tool
+	
 	
 	
 	
@@ -95,11 +95,18 @@ public class DatabaseConnector {
 	
 	
 
-	
+	//This is currently not going to be implemented.  We are under the impression that we will
+	//always save accounts in case a player wishes to come back to the game.  We could
+	//set a field for disabling the account instead of destroying the data.
 	//deleteAccount()
 	
-	
+	//We currently have two methods : one for character info and another for character inventory.
+	//The need for this method is not yet clear.
 	//updateChar()
+	
+	//Maybe a method just for updating the position of the character would be handy...
+	//updateCharPosition()
+	
 	
 	//makeRandomChar()
 	
@@ -288,6 +295,7 @@ public class DatabaseConnector {
 		return accountID;
 	}
 	
+	//admin tool
 	//This method expects all data to be validated and performs NO error checking.
 	public void lockAccount(String accountID)
 	{
@@ -311,6 +319,7 @@ public class DatabaseConnector {
 	    }
 	}
 	
+	//admin tool
 	//This method expects all data to be validated and performs NO error checking.
 		public void unlockAccount(String accountID)
 		{
@@ -334,6 +343,7 @@ public class DatabaseConnector {
 		    }
 		}
 	
+		//admin tool
 	//This method expects all data to be validated and performs NO error checking.
 	public void banAccount(String accountID)
 	{
@@ -357,6 +367,7 @@ public class DatabaseConnector {
 	    }
 	}
 	
+	//admin tool
 	//This method expects all data to be validated and performs NO error checking.
 		public void unbanAccount(String accountID)
 		{
@@ -498,30 +509,30 @@ public class DatabaseConnector {
 		try 
 		{	
 			//Check to make sure that the account name does not already exist.
-			sql = "SELECT * from CharacterInfoTable where charName = \'" + charName + "\';";
+			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
 			rs = stmt.executeQuery(sql);
 			rs.next();
 	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
 			
-			charClass = rs.getString(rs.findColumn("charClass"));
+			charClass = rs.getString(rs.findColumn("class"));
 			
 			charInfo = charClass + ":";
-			
+//			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+//			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
 			charInfo += rs.getString(rs.findColumn("level")) + ":";
 			charInfo += rs.getString(rs.findColumn("gender")) + ":";
-			charInfo += rs.getString(rs.findColumn("str")) + ":";
-			charInfo += rs.getString(rs.findColumn("dex")) + ":";
-			charInfo += rs.getString(rs.findColumn("con")) + ":";
-			charInfo += rs.getString(rs.findColumn("charStatInt")) + ":";
-			charInfo += rs.getString(rs.findColumn("wil")) + ":";
-			charInfo += rs.getString(rs.findColumn("luck")) + ":";
-			charInfo += rs.getString(rs.findColumn("experience")) + ":";
-			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
-			charInfo += rs.getString(rs.findColumn("luck")) + ":";
+			charInfo += rs.getString(rs.findColumn("health")) + ":";
+			charInfo += rs.getString(rs.findColumn("mana")) + ":";
 			charInfo += rs.getString(rs.findColumn("experience")) + ":";
 			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
 			charInfo += rs.getString(rs.findColumn("yCoord")) + ":";
 			charInfo += rs.getString(rs.findColumn("gold")) + ":";
+			charInfo += rs.getString(rs.findColumn("strength")) + ":";
+			charInfo += rs.getString(rs.findColumn("dexterity")) + ":";
+			charInfo += rs.getString(rs.findColumn("constitution")) + ":";
+			charInfo += rs.getString(rs.findColumn("intelligence")) + ":";
+			charInfo += rs.getString(rs.findColumn("willpower")) + ":";
+			charInfo += rs.getString(rs.findColumn("luck")) + ":";
 			charInfo += rs.getString(rs.findColumn("abilities")) + ":";
 			charInfo += rs.getString(rs.findColumn("cooldown"));
 		} 
