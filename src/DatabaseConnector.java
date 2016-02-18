@@ -84,20 +84,20 @@ public class DatabaseConnector {
 //	String encryptedString = new String(messageDigest.digest());
 	
 	//later admin tool
-	//lockAccount(String username, int lockedStatus)
 	
-	//getAccountInfo(String username)
+	
 	
 	//later admin tool
-	//banAccount(String username, int bannedStatus)
+	
 	
 	//forgotPassword(String username )
 	
-	//deleteCharacter()
+	
 	
 
 	
-	//
+	//deleteAccount()
+	
 	
 	//updateChar()
 	
@@ -288,6 +288,148 @@ public class DatabaseConnector {
 		return accountID;
 	}
 	
+	//This method expects all data to be validated and performs NO error checking.
+	public void lockAccount(String accountID)
+	{
+		ResultSet rs;
+		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+		try{
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			rs.updateInt( "locked", 1 );
+			rs.updateRow();
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("lockAccount completed" );
+	    }
+	}
+	
+	//This method expects all data to be validated and performs NO error checking.
+		public void unlockAccount(String accountID)
+		{
+			ResultSet rs;
+			String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+			try{
+				rs = stmt.executeQuery(sql);
+				rs.next();
+				rs.updateInt( "locked", 0 );
+				rs.updateRow();
+			} 
+		    catch (SQLException e) {
+		       e.printStackTrace();
+		    }
+		    catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		    finally
+		    {  
+		       System.out.println("unlockAccount completed" );
+		    }
+		}
+	
+	//This method expects all data to be validated and performs NO error checking.
+	public void banAccount(String accountID)
+	{
+		ResultSet rs;
+		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+		try{
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			rs.updateInt( "banned", 1 );
+			rs.updateRow();
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("banAccount completed");
+	    }
+	}
+	
+	//This method expects all data to be validated and performs NO error checking.
+		public void unbanAccount(String accountID)
+		{
+			ResultSet rs;
+			String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+			try{
+				rs = stmt.executeQuery(sql);
+				rs.next();
+				rs.updateInt( "banned", 0 );
+				rs.updateRow();
+			} 
+		    catch (SQLException e) {
+		       e.printStackTrace();
+		    }
+		    catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		    finally
+		    {  
+		       System.out.println("unbanAccount completed");
+		    }
+		}
+
+//test this!!!
+	public String getAccountInfo(String accountID)
+	{
+		String username = ""; 
+		String accountInfo = ""; //This will be returned.
+		
+		String password;
+		String email;
+		String securityQuestion1;
+		String securityAnswer1;
+		String securityQuestion2;
+		String securityAnswer2;
+		
+		ResultSet rs;
+		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+		try{
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			username = rs.getString(rs.findColumn("username"));
+			//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
+			accountInfo = username + ":";
+			
+			accountInfo += rs.getString(rs.findColumn("password")) + ":";
+			
+			accountInfo += rs.getString(rs.findColumn("email")) + ":";
+			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + ":";
+			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + ":";
+			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + ":";
+			accountInfo += rs.getString(rs.findColumn("securityAnswer2"));
+
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+		
+	       System.out.println("getAccountInfo completed and it is :" + accountInfo);
+	    }
+		
+		if( accountID.equals("") )
+		{
+			System.out.println("Unable to retrieve accountInfo...");
+		}
+		return accountInfo;
+	}
+	
 	//This is the method that will be called to send info to the character select screen.
 	//This method gets basic char info such as name, class, and level for each char for the account and 
 	//builds a string seperating each value for a char with a space.  Each char is seperated by a colon (ie ":").
@@ -344,27 +486,82 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
-	//This needs to be worked on.  
-	public String getCharInfo(String accountID)
+	//This needs to be tested.  
+	public String getCharInfo(String charName)
 	{
 		String charInfo = "defaultValue";  //This will be returned;
-		String charName;
-		String charLevel;
+
 		String charClass;
-		int numChars;
-		
 		String sql;
 		ResultSet rs;
 		
 		try 
 		{	
 			//Check to make sure that the account name does not already exist.
-			sql = "SELECT * from CharacterInfoTable where accountID = \'" + accountID + "\';";
+			sql = "SELECT * from CharacterInfoTable where charName = \'" + charName + "\';";
 			rs = stmt.executeQuery(sql);
+			rs.next();
+	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
+			
+			charClass = rs.getString(rs.findColumn("charClass"));
+			
+			charInfo = charClass + ":";
+			
+			charInfo += rs.getString(rs.findColumn("level")) + ":";
+			charInfo += rs.getString(rs.findColumn("gender")) + ":";
+			charInfo += rs.getString(rs.findColumn("str")) + ":";
+			charInfo += rs.getString(rs.findColumn("dex")) + ":";
+			charInfo += rs.getString(rs.findColumn("con")) + ":";
+			charInfo += rs.getString(rs.findColumn("charStatInt")) + ":";
+			charInfo += rs.getString(rs.findColumn("wil")) + ":";
+			charInfo += rs.getString(rs.findColumn("luck")) + ":";
+			charInfo += rs.getString(rs.findColumn("experience")) + ":";
+			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
+			charInfo += rs.getString(rs.findColumn("luck")) + ":";
+			charInfo += rs.getString(rs.findColumn("experience")) + ":";
+			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
+			charInfo += rs.getString(rs.findColumn("yCoord")) + ":";
+			charInfo += rs.getString(rs.findColumn("gold")) + ":";
+			charInfo += rs.getString(rs.findColumn("abilities")) + ":";
+			charInfo += rs.getString(rs.findColumn("cooldown"));
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("create character attempt completed");
+	    }
+		return charInfo;
+	}
 	
+	
+	//Test this!!
+	public String getCharInventory(String charName)
+	{
+		String charInv = "";
+		
+		String equippedItems;
+		String sql;
+		ResultSet rs;
+		
+		try 
+		{	
+			//Check to make sure that the account name does not already exist.
+			sql = "SELECT * from CharacterInventoryTable where charName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sql);
+			rs.next();
 			
-			
-			
+			equippedItems = rs.getString(rs.findColumn("charClass"));
+			charInv = equippedItems + "|";
+			for(int i = 0; i < 20; i++)
+			{
+				String fieldName = "inventorySlot" + (i+1);
+				charInv += "|" + rs.getString(rs.findColumn(fieldName));
+			}	
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -377,9 +574,67 @@ public class DatabaseConnector {
 	       System.out.println("create character attempt completed");
 	    }
 		
-		
-		
-		return charInfo;
+		return charInv;
+	}
+	//untested.  Expects perfect data.
+	public void deleteCharacter(String charName)
+	{
+		String errorCode = "";
+		try{
+			//DELETE FROM table_name
+			//			WHERE some_column=some_value;
+			String sql = "Delete CharacterInfoTable WHERE charName = \'" + charName + "\';";
+			System.out.println(sql);
+			//System.exit(0);
+			int insertResult = stmt.executeUpdate(sql);
+			
+			if( insertResult == 1)
+			{
+				errorCode = "1 charInfoDeleted";
+				System.out.println(errorCode);	
+			}
+			else if( insertResult > 1)
+			{
+				errorCode = "More than one charInfo with charName :" + charName + " deleted.  This is WRONG.";
+				System.out.println(errorCode);
+			}
+			else if( insertResult == 0)
+			{
+				errorCode = "Failed to delete charInfo.";
+				System.out.println(errorCode);
+			}
+			
+			sql = "Delete CharacterInventoryTable WHERE charName = \'" + charName + "\';";
+			System.out.println(sql);
+			//System.exit(0);
+			insertResult = stmt.executeUpdate(sql);
+			
+			if( insertResult == 1)
+			{
+				errorCode = "1 charInvDeleted";
+				System.out.println(errorCode);	
+			}
+			else if( insertResult > 1)
+			{
+				errorCode = "More than one char inv with charName :" + charName + " deleted.  This is WRONG.";
+				System.out.println(errorCode);
+			}
+			else if( insertResult == 0)
+			{
+				errorCode = "Failed to delete charInv.";
+				System.out.println(errorCode);
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("char delete  attempt completed");
+	    }	
 	}
 	
 	public String createChar(String charName, int accountID , String charClass, String gender, String str, String dex, String con, String charStatInt, String wil, String luck)
@@ -518,21 +773,21 @@ public class DatabaseConnector {
 			//System.exit(0);
 			if( insertResult == 1)
 			{
-				errorCode = "accountCreated";
+				errorCode = "accountUpdated";//Best case scenario
 				System.out.println(errorCode);
 				rs.close();
 				return errorCode;
 			}
 			else if( insertResult > 1)
 			{
-				errorCode = "More than one account with username :" + username + " exists.  This is WRONG.";
+				errorCode = "More than one account with username :" + username + " exists.  Both were updated, hahaha.  This is WRONG.";
 				System.out.println(errorCode);
 				rs.close();
 				return errorCode;
 			}
 			else if( insertResult == 0)
 			{
-				errorCode = "Failed to create account.";
+				errorCode = "Failed to update account.";
 				System.out.println(errorCode);
 				rs.close();
 				return errorCode;
@@ -622,16 +877,11 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
-	public String updateCharInfo(String charName, int accountID , String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String experience, String xCoord, String yCoord, String gold, String wil, String luck, String abilities, String cooldown)
+	//Test this!!
+	public String updateCharInfo(String charName, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String experience, String xCoord, String yCoord, String gold, String wil, String luck, String abilities, String cooldown)
 	{
 		String errorCode = "";
 		ResultSet rs;
-		String initialAbilities = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-		String initialCooldown  = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		int mana =0;
 		int health =0;
 		if( charClass.equals("Mage"))
@@ -712,6 +962,7 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
+	//Test this!!
 	public String updateCharInventory(String charName, String equippedItems, String[] inventorySlots) {
 		String errorCode = "";
 		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\' ";
@@ -723,9 +974,59 @@ public class DatabaseConnector {
 		sql += "WHERE charName = \'" + charName + "\';";
 		
 		System.out.println(sql);
+		ResultSet rs;
 		
+		try
+		{
+			String sqlCheck = "SELECT * from CharacterInventoryTable where characterName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sqlCheck);
+			int numResults = 0;
+			while( rs.next() )
+			{
+				numResults++;
+			}
+			rs.beforeFirst();
+			rs.next();
+			System.out.println("char's with name before update...  numResults = " + numResults);
+		    
+			
+			//If there is no results for the entered charName
+			if ( numResults == 0 ) {
+			      System.out.println("No character found with name: " + charName);
+			         rs.close();
+			      errorCode = "char name not found";
+			      return errorCode;
+			      //Call a method that suggests the player to make a new account.
+			 }
+			//check for existing char name
+			else if ( numResults == 1 ) {
+				//notify admin
+				// include username and explain the possible situation of data concurrency issues....
+				System.out.println("Charname found");
+			}
+			else {
+				rs.close();
+				return "twoRowsWithSameCharNameFoundWTF";
+			}
+			
+			int insertResult = stmt.executeUpdate(sql);
+			if( insertResult == 1)
+			{
+				errorCode = "charInv updated successfully";
+				rs.close();
+				return errorCode;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("update characterInv attempt completed");
+	    }
 		return errorCode;
 	}
 }
-
-
