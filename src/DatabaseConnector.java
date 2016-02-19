@@ -135,12 +135,7 @@ public class DatabaseConnector {
 	//this method will create random items and add them to the itemTableOfPowah
 	//generateRandomItem()
 	
-	//Send all clients updated positions of other players in their local area, as well as notifications of events.
-	//Events can include zoning, special encounters, and other stuff that we dream up later. :)
-	//broadcastGameChanges()
-	
-	
-	
+
 	//returns a String as errorCode that lets the calling method know the results of the attempt
 	//based on a convention that is yet to be determined
 	public String loginAttempt(String username, String password){
@@ -500,7 +495,7 @@ public class DatabaseConnector {
 	//This needs to be tested.  
 	public String getCharInfo(String charName)
 	{
-		String charInfo = "defaultValue";  //This will be returned;
+		String charInfo = "characterInfo:" + charName;  //This will be returned;
 
 		String charClass;
 		String sql;
@@ -511,12 +506,13 @@ public class DatabaseConnector {
 			//Check to make sure that the account name does not already exist.
 			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
 			rs = stmt.executeQuery(sql);
+			//This method needs to 
 			rs.next();
 	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
 			
 			charClass = rs.getString(rs.findColumn("class"));
 			
-			charInfo = charClass + ":";
+			charInfo += ":" + charClass + ":";
 //			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 //			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
 			charInfo += rs.getString(rs.findColumn("level")) + ":";
@@ -588,20 +584,20 @@ public class DatabaseConnector {
 		return charInv;
 	}
 	//untested.  Expects perfect data.
-	public void deleteCharacter(String charName)
+	public String deleteCharacter(String charName)
 	{
 		String errorCode = "";
 		try{
 			//DELETE FROM table_name
 			//			WHERE some_column=some_value;
-			String sql = "Delete CharacterInfoTable WHERE charName = \'" + charName + "\';";
+			String sql = "Delete From CharacterInfoTable WHERE characterName = \'" + charName + "\';";
 			System.out.println(sql);
 			//System.exit(0);
 			int insertResult = stmt.executeUpdate(sql);
 			
 			if( insertResult == 1)
 			{
-				errorCode = "1 charInfoDeleted";
+				errorCode = "charInfoDeleted";
 				System.out.println(errorCode);	
 			}
 			else if( insertResult > 1)
@@ -615,25 +611,25 @@ public class DatabaseConnector {
 				System.out.println(errorCode);
 			}
 			
-			sql = "Delete CharacterInventoryTable WHERE charName = \'" + charName + "\';";
+			sql = "Delete from CharacterInventoryTable WHERE characterName = \'" + charName + "\';";
 			System.out.println(sql);
 			//System.exit(0);
 			insertResult = stmt.executeUpdate(sql);
-			
+			String errorCode2 = "";
 			if( insertResult == 1)
 			{
-				errorCode = "1 charInvDeleted";
-				System.out.println(errorCode);	
+				errorCode2 = "charInvDeleted";
+				System.out.println(errorCode2);	
 			}
 			else if( insertResult > 1)
 			{
-				errorCode = "More than one char inv with charName :" + charName + " deleted.  This is WRONG.";
-				System.out.println(errorCode);
+				errorCode2 = "More than one char inv with charName :" + charName + " deleted.  This is WRONG.";
+				System.out.println(errorCode2);
 			}
 			else if( insertResult == 0)
 			{
-				errorCode = "Failed to delete charInv.";
-				System.out.println(errorCode);
+				errorCode2 = "Failed to delete charInv.";
+				System.out.println(errorCode2);
 			}
 		} 
 	    catch (SQLException e) {
@@ -646,6 +642,7 @@ public class DatabaseConnector {
 	    {  
 	       System.out.println("char delete  attempt completed");
 	    }	
+		return errorCode;
 	}
 	
 	public String createChar(String charName, int accountID , String charClass, String gender, String str, String dex, String con, String charStatInt, String wil, String luck)
@@ -888,8 +885,59 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
+	//Send all clients updated positions of other players in their local area, as well as notifications of events.
+		//Events can include zoning, special encounters, and other stuff that we dream up later. :)
+		//broadcastGameChanges()
+	public String broadcastGameChanges(String charName, String xPos, String yPos)
+	{
+		
+		
+		int numChars = 0;
+		
+		//start of pasted code...
+		String sql;
+		ResultSet rs;
+		String ofAllStrings = "";
+		
+		try 
+		{	
+			//Check to make sure that the account name does not already exist.
+			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\'and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
+					+ "yCoord > \'" + (Integer.parseInt(yPos) - 300) + "\'and yCoord < \'" + (Integer.parseInt(yPos) + 300) + "\' ;";
+			rs = stmt.executeQuery(sql);
+	        while( rs.next() )
+			{
+				if(numChars>0)
+				{
+					ofAllStrings += ":";
+				}
+				ofAllStrings += (rs.getString("characterName") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
+				numChars++;
+			}
+	        
+			System.out.println(ofAllStrings);
+			rs.close();
+			return ofAllStrings;
+			
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("broadcastGameChanges completed");
+	    }
+		
+		
+		
+		return ofAllStrings;
+	}
+	
 	//Test this!!
-	public String updateCharInfo(String charName, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String experience, String xCoord, String yCoord, String gold, String wil, String luck, String abilities, String cooldown)
+	public String updateCharInfo(String charName, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String xCoord, String yCoord, String gold,  String abilities, String cooldown)
 	{
 		String errorCode = "";
 		ResultSet rs;
@@ -938,12 +986,11 @@ public class DatabaseConnector {
 			         rs.close();
 			      errorCode = "char name not found";
 			      return errorCode;
-			      //Call a method that suggests the player to make a new account.
+			      
 			 }
 			//check for existing char name
 			else if ( numResults == 1 ) {
-				//notify admin
-				// include username and explain the possible situation of data concurrency issues....
+				
 				System.out.println("Charname found");
 			}
 			else {
@@ -954,7 +1001,7 @@ public class DatabaseConnector {
 			int insertResult = stmt.executeUpdate(sql);
 			if( insertResult == 1)
 			{
-				errorCode = "char updated successfully";
+				errorCode = "charUpdated";
 				rs.close();
 				return errorCode;
 			}
