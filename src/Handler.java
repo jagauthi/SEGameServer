@@ -98,6 +98,17 @@ public class Handler extends Thread {
                     		out.println(errCode);	
                     	}
                     	break;
+                    case "DELETECHAR":
+                    	System.out.println("calling db.deleteCharacter() method");
+                    	errCode = Main.db.deleteCharacter(tokens[1]);//this needs to be implemented and does not return anything
+                    	//out.println(errCode);
+                    	out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
+                    	break;
+                    case "UPDATECHARINFO":
+                    	System.out.println("calling db.updateCharInfo() method");
+                    	errCode = Main.db.updateCharInfo(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10],tokens[11],tokens[12],tokens[13],tokens[14], tokens[15],tokens[16] );
+                    	out.println(errCode + ":" + Main.db.broadcastGameChanges(tokens[1], tokens[12],tokens[13]));
+                    	break;
                     case "GETSECURITYINFO":
                     	System.out.println("calling db.getAccountInfo() method");
                     	errCode = Main.db.getAccountInfo(tokens[1]);
@@ -107,6 +118,11 @@ public class Handler extends Thread {
                     	System.out.println("calling db.lockAccount() method");
                     	Main.db.lockAccount(tokens[1]);//this needs to be implemented and does not return anything
                     	//out.println("securityInfo:" + errCode);
+                    	break;
+                    case "PLAYGAME":
+                    	System.out.println("calling db.updateAccount() method");
+                    	errCode = Main.db.getCharInfo(tokens[1]);
+                    	out.println(errCode);
                     	break;
 //                    case "TESTLOGOUT":
 //                    	names.remove(tokens[1]);
@@ -122,6 +138,8 @@ public class Handler extends Thread {
                     	System.out.println("default case");
                     	for (PrintWriter writer : writers) {
                             writer.println("MESSAGE " + name + ": " + input);
+                            //Also need to send this message to the chat box on the server menu...
+                            //Main.launch.messageArea.append(line.substring(8) + "\n");
                         }
                     	break;
                     }
