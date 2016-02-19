@@ -438,7 +438,7 @@ public class DatabaseConnector {
 	
 	//This is the method that will be called to send info to the character select screen.
 	//This method gets basic char info such as name, class, and level for each char for the account and 
-	//builds a string seperating each value for a char with a space.  Each char is seperated by a colon (ie ":").
+	//builds a string separating each value for a char with a space.  Each char is separated by a colon (i.e. ":").
 	public String getBasicCharsInfo(int accountID)
 	{
 		int numChars = 0;
@@ -911,7 +911,7 @@ public class DatabaseConnector {
 				{
 					ofAllStrings += ":";
 				}
-				ofAllStrings += (rs.getString("characterName") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
+				ofAllStrings += (rs.getString("characterName") + " " + rs.getString("class") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
 				numChars++;
 			}
 	        
