@@ -1087,4 +1087,44 @@ public class DatabaseConnector {
 	    }
 		return errorCode;
 	}
+	
+	public String getLocations()
+	{
+		String errorCode = "loadLocations:";
+		ResultSet rs;
+		String sql;
+		
+		int numLocations = 0;
+		try 
+		{	
+			//Check to make sure that the account name does not already exist.
+			sql = "SELECT * from LocationsTable;";
+			rs = stmt.executeQuery(sql);
+			
+			while( rs.next() )
+			{
+				if(numLocations>0)
+				{
+					errorCode += ":";
+				}
+				errorCode += (rs.getString("Name") + " " + rs.getString("GlobalCoords"));
+				numLocations++;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("Loaded locations successfully.");
+	    }
+		
+		return errorCode;
+	}
+	
+	
+	
 }
