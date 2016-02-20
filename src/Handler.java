@@ -120,8 +120,13 @@ public class Handler extends Thread {
                     	//out.println("securityInfo:" + errCode);
                     	break;
                     case "PLAYGAME":
-                    	System.out.println("calling db.updateAccount() method");
+                    	System.out.println("calling db.getCharInfo() method");
                     	errCode = Main.db.getCharInfo(tokens[1]);
+                    	out.println(errCode);
+                    	break;
+                    case "GETLOCATIONS":
+                    	System.out.println("Calling db.getLocations() method");
+                    	errCode = Main.db.getLocations();
                     	out.println(errCode);
                     	break;
 //                    case "TESTLOGOUT":
