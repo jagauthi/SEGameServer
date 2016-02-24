@@ -4,6 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 
 public class DatabaseConnector {
 	
@@ -114,7 +124,7 @@ public class DatabaseConnector {
 	
 	//addFriendToClan()
 	
-	//dispellFriend()
+	//deFriend()
 	
 	//leaveClan()
 	
@@ -415,6 +425,8 @@ public class DatabaseConnector {
 			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityAnswer2"));
+			accountInfo += rs.getString(rs.findColumn("macAddress"));
+			accountInfo += rs.getString(rs.findColumn("lastLogInTime"));
 
 		} 
 	    catch (SQLException e) {
@@ -515,13 +527,17 @@ public class DatabaseConnector {
 			charInfo += ":" + charClass + ":";
 //			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 //			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+			charInfo += rs.getString(rs.findColumn("loggedIn")) + ":";
 			charInfo += rs.getString(rs.findColumn("level")) + ":";
 			charInfo += rs.getString(rs.findColumn("gender")) + ":";
 			charInfo += rs.getString(rs.findColumn("health")) + ":";
 			charInfo += rs.getString(rs.findColumn("mana")) + ":";
 			charInfo += rs.getString(rs.findColumn("experience")) + ":";
+			charInfo += rs.getString(rs.findColumn("pointsToSpend")) + ":";
 			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
 			charInfo += rs.getString(rs.findColumn("yCoord")) + ":";
+			charInfo += rs.getString(rs.findColumn("location")) + ":";
+			charInfo += rs.getString(rs.findColumn("clanName")) + ":";
 			charInfo += rs.getString(rs.findColumn("gold")) + ":";
 			charInfo += rs.getString(rs.findColumn("strength")) + ":";
 			charInfo += rs.getString(rs.findColumn("dexterity")) + ":";
@@ -551,6 +567,7 @@ public class DatabaseConnector {
 	{
 		String charInv = "";
 		
+		String gold;
 		String equippedItems;
 		String sql;
 		ResultSet rs;
@@ -562,8 +579,11 @@ public class DatabaseConnector {
 			rs = stmt.executeQuery(sql);
 			rs.next();
 			
-			equippedItems = rs.getString(rs.findColumn("charClass"));
+			equippedItems = rs.getString(rs.findColumn("equippedItems"));
 			charInv = equippedItems + "|";
+			
+			gold = rs.getString(rs.findColumn("gold"));
+			charInv += gold + "|";
 			for(int i = 0; i < 20; i++)
 			{
 				String fieldName = "inventorySlot" + (i+1);
@@ -674,9 +694,9 @@ public class DatabaseConnector {
 			health = Integer.parseInt(con) * 3 ;
 		}
 		
-		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
 				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" 
+				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', \'" 
 				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
@@ -845,7 +865,18 @@ public class DatabaseConnector {
 				return errorCode;
 			}
 			
-			sql = "INSERT INTO AccountTable (username, password, email, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2 )  VALUES ( \'" + username + "\', \'" + password + "\', \'" + email + "\', \'" + securityQuestion1 + "\', \'" + securityAnswer1 + "\', \'" + securityQuestion2 + "\', \'" + securityAnswer2 + "\') ;";
+			// FIX THIS
+			String macAddress = "placeholder";
+			
+			Calendar cal = Calendar.getInstance();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMMM.yyyy GGG hh:mm aaa z");
+	        System.out.println( sdf.format(cal.getTime()) );
+			String lastLogInTime = sdf.format(cal.getTime());
+			
+			Boolean loggedIn = true;
+			
+			
+			sql = "INSERT INTO AccountTable (username, password, email, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, macAddress, lastLogInTime, loggedIn)  VALUES ( \'" + username + "\', \'" + password + "\', \'" + email + "\', \'" + securityQuestion1 + "\', \'" + securityAnswer1 + "\', \'" + securityQuestion2 + "\', \'" + securityAnswer2 + "\', \'" + macAddress + "\', \'" + lastLogInTime + "\', \'" + loggedIn + "\') ;";
 			int insertResult = stmt.executeUpdate(sql);
 			if( insertResult == 1)
 			{
@@ -902,8 +933,8 @@ public class DatabaseConnector {
 		try 
 		{	
 			//Check to make sure that the account name does not already exist.
-			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\'and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
-					+ "yCoord > \'" + (Integer.parseInt(yPos) - 300) + "\'and yCoord < \'" + (Integer.parseInt(yPos) + 300) + "\' ;";
+			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\' and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
+					+ " loggedIn = '1' and yCoord > \'" + (Integer.parseInt(yPos) - 300) + "\' and yCoord < \'" + (Integer.parseInt(yPos) + 300) + "\' ;";
 			rs = stmt.executeQuery(sql);
 	        while( rs.next() )
 			{
@@ -937,7 +968,7 @@ public class DatabaseConnector {
 	}
 	
 	//Test this!!
-	public String updateCharInfo(String charName, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String xCoord, String yCoord, String gold,  String abilities, String cooldown)
+	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
 	{
 		String errorCode = "";
 		ResultSet rs;
@@ -959,7 +990,7 @@ public class DatabaseConnector {
 			mana = Integer.parseInt(charStatInt);
 			health = Integer.parseInt(con) * 3 ;
 		}
-		String sql = "UPDATE CharacterInfoTable set class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender + "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience +  "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\',  gold = \'" + gold + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
+		String sql = "UPDATE CharacterInfoTable set loggedIn = \'" + loggedIn + "\', class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender + "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience + "\', pointsToSpend = \'" + pointsToSpend + "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\', clanName = \'" + clanName + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
 		
 //		sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 //				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
@@ -1021,9 +1052,9 @@ public class DatabaseConnector {
 	}
 	
 	//Test this!!
-	public String updateCharInventory(String charName, String equippedItems, String[] inventorySlots) {
+	public String updateCharInventory(String charName, String gold, String equippedItems, String[] inventorySlots) {
 		String errorCode = "";
-		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\' ";
+		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\',  gold = \'" + gold + "\' ";
 		for(int i = 0; i < 20; i++)
 		{
 			String fieldName = "inventorySlot" + (i+1);
