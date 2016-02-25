@@ -424,8 +424,8 @@ public class DatabaseConnector {
 			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + ":";
-			accountInfo += rs.getString(rs.findColumn("securityAnswer2"));
-			accountInfo += rs.getString(rs.findColumn("macAddress"));
+			accountInfo += rs.getString(rs.findColumn("securityAnswer2"))+ ":";
+			accountInfo += rs.getString(rs.findColumn("macAddress"))+ ":";
 			accountInfo += rs.getString(rs.findColumn("lastLogInTime"));
 
 		} 
@@ -538,7 +538,6 @@ public class DatabaseConnector {
 			charInfo += rs.getString(rs.findColumn("yCoord")) + ":";
 			charInfo += rs.getString(rs.findColumn("location")) + ":";
 			charInfo += rs.getString(rs.findColumn("clanName")) + ":";
-			charInfo += rs.getString(rs.findColumn("gold")) + ":";
 			charInfo += rs.getString(rs.findColumn("strength")) + ":";
 			charInfo += rs.getString(rs.findColumn("dexterity")) + ":";
 			charInfo += rs.getString(rs.findColumn("constitution")) + ":";
@@ -1129,7 +1128,7 @@ public class DatabaseConnector {
 		try 
 		{	
 			//Check to make sure that the account name does not already exist.
-			sql = "SELECT * from LocationsTable;";
+			sql = "SELECT * from LocationTable;";
 			rs = stmt.executeQuery(sql);
 			
 			while( rs.next() )
