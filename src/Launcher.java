@@ -124,8 +124,8 @@ public class Launcher{
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.NONE;
         
-        c.gridx = 0;
-        c.gridy = 0;
+        c.gridx = 1;
+        c.gridy = 1;
         connectPanel.add(connectButton, c);
 	}
 	
@@ -134,11 +134,13 @@ public class Launcher{
 		
 		//collecting code to make the chat box
 		//JFrame frame = new JFrame("Chatter");
-	    JTextField textField = new JTextField(40);
+	    JTextField textField = new JTextField(20);
 	    
 	    JTextArea consoleArea = new JTextArea(8,40);
 	    
-	    
+	    JPanel leftPanel = new JPanel(new GridBagLayout());
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        mainPanel = new JPanel(new GridBagLayout());
 	    
 	    JLabel test = new JLabel();
 	    test.setText("Test test test");
@@ -171,16 +173,16 @@ public class Launcher{
         InetAddress addr;
 		try {
 			addr = InetAddress.getLocalHost();
-			 //serverHostnameLabel.setText("Server Hostname : " + addr);
-			serverHostnameLabel.setText("test");
+			 serverHostnameLabel.setText("Server Hostname : " + addr);
+			//serverHostnameLabel.setText("test");
 		       
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
-		accountNameText.setPreferredSize(new Dimension(200, 40));
-		characterNameText.setPreferredSize(new Dimension(200, 40));
+		accountNameText.setPreferredSize(new Dimension(40, 40));
+		characterNameText.setPreferredSize(new Dimension(40, 40));
 		
 		JPanel placeholderPanel = new JPanel(new GridBagLayout());
 		placeHolder.setPreferredSize(new Dimension(200, 400));
@@ -218,110 +220,84 @@ public class Launcher{
             }
         });
         
-        JPanel serverMenuPanel = new JPanel();
-        serverMenuPanel.setLayout(new GridBagLayout());
+        
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.NONE;
         
         c.gridx = 0;
-        c.gridy = 0;
-        serverMenuPanel.add(serverHostnameLabel, c);
-        
-        c.gridx = 0;
-        c.gridy = 1;
-        serverMenuPanel.add(accountNameLabel, c);
-      
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridy = 1;
-        serverMenuPanel.add(accountNameText, c);
-        
-
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 2;
-        c.gridy = 1;
-        serverMenuPanel.add(go, c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        serverMenuPanel.add(characterNameLabel, c);
-
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridy = 2;
-        serverMenuPanel.add(characterNameText, c);
-        
-
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 2;
-        c.gridy = 2;
-        serverMenuPanel.add(go2, c);
-
-        c.gridx = 0;
-        c.gridy = 3;
-        serverMenuPanel.add(NetworkMonitor, c);
-        
-        c.gridx = 0;
-        c.gridy = 4;
-        serverMenuPanel.add(messageArea, c);
-        
-        c.gridx = 0;
-        c.gridy = 5;
-        serverMenuPanel.add(textField, c);
-        
-        c.gridx = 0;
-        c.gridy = 6;
-        serverMenuPanel.add(consoleArea, c);
-        
-        
-        c.gridx = 3;
-        c.gridy = 1;
-        //c.fill = GridBagConstraints.BOTH;
-        //serverMenuPanel.add(placeHolder, c);
-        //serverMenuPanel.add(placeholderPanel, c);
-        
-        JPanel leftPanel = new JPanel(new GridBagLayout());
-        JPanel rightPanel = new JPanel(new GridBagLayout());
-        mainPanel = new JPanel(new GridBagLayout());
-        
-        GridBagConstraints constraintaroos = new GridBagConstraints();
-        constraintaroos.fill = GridBagConstraints.NONE;
-        
-        constraintaroos.gridx = 0;
-        constraintaroos.gridy = 0;
-        leftPanel.add(serverMenuPanel, constraintaroos);
+        c.gridy = 0;        
         leftPanel.setBorder(BorderFactory.createTitledBorder("Left Panel Border"));
         leftPanel.setPreferredSize(new Dimension(500, 700));
         
-        constraintaroos.gridx = 0;
-        constraintaroos.gridy = 0;
-        rightPanel.add(placeholderPanel, constraintaroos);
+        c.gridx = 0;
+        c.gridy = 0;
+        rightPanel.add(placeholderPanel, c);
         rightPanel.setBorder(BorderFactory.createTitledBorder("Right Panel Border"));
         rightPanel.setPreferredSize(new Dimension(500, 700));
         
-        constraintaroos.gridx = 0;
-        constraintaroos.gridy = 0;
-        mainPanel.add(leftPanel, constraintaroos);
+        c.gridx = 0;
+        c.gridy = 1;
+        mainPanel.add(leftPanel, c);
         
-        constraintaroos.gridx = 1;
-        constraintaroos.gridy = 0;
-        mainPanel.add(rightPanel, constraintaroos);
+        c.gridx = 1;
+        c.gridy = 1;
+        mainPanel.add(rightPanel, c);
 
         mainPanel.setBorder(BorderFactory.createTitledBorder("Main Panel Border"));
-        
-        
-//        placeHolder.setBorder(BorderFactory.createTitledBorder("WhateverTest"));
-//        placeHolder.setLayout(new GridBagLayout());
-//        c = new GridBagConstraints();
-//        c.fill = GridBagConstraints.NONE;
-//        c.anchor = GridBagConstraints.EAST;
-//        
-//        c.gridx = 0;
-//        c.gridy = 0;
-//        placeHolder.add( test, c);
+      
+        c.gridx = 0;
+        c.gridy = 0;
+        mainPanel.add(serverHostnameLabel, c);
        
         
+        c.gridx = 0;
+        c.gridy = 0;
+        leftPanel.add(accountNameLabel, c);
+      
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        leftPanel.add(accountNameText, c);
+        
+
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 1;
+        c.gridy = 1;
+        leftPanel.add(go, c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        leftPanel.add(characterNameLabel, c);
+
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 3;
+        leftPanel.add(characterNameText, c);
+        
+
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 1;
+        c.gridy = 3;
+        leftPanel.add(go2, c);
+
+        c.gridx = 0;
+        c.gridy = 4;
+        leftPanel.add(NetworkMonitor, c);
+        
+        c.gridx = 0;
+        c.gridy = 5;
+        leftPanel.add(messageArea, c);
+        
+        c.gridx = 0;
+        c.gridy = 6;
+        leftPanel.add(textField, c);
+        
+        c.gridx = 0;
+        c.gridy = 7;
+        leftPanel.add(consoleArea, c);
+        
+  
 	}
 	
 	public void initCreateAccountPanel()
