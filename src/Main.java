@@ -31,5 +31,8 @@ public class Main {
         //db.updateCharInventory("Gilsani", equippedItems, inventorySlots);
         //db.deleteCharacter("KittyPryde");
         //db.broadcastGameChanges("Gilsani", "5", "5");
+        //db.getLocations();
+        //db.addCharToClanTable("STC", "Anone");
+       // db.makeClanTable("ASDF3", "asdf");
     }
 }
