@@ -118,8 +118,9 @@ public class Launcher implements ActionListener{
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.add(serverMenuPanel);
+		frame.add(serverMenuPanel);
+		frame.setVisible(true);
+        
 	}
 	
 
