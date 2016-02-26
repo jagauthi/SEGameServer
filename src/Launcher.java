@@ -152,12 +152,16 @@ public class Launcher implements ActionListener{
 		JLabel messageBoxLabel = new JLabel("Chat Messages");
 		
 		accountNameSearchText = new JTextField(30);
+		accountNameSearchText.setMinimumSize(new Dimension(WIDTH/2-250, 40));
 	    characterNameSearchText = new JTextField(30);
+	    characterNameSearchText.setMinimumSize(new Dimension(WIDTH/2-250, 40));
 	    messageInputText =new JTextField(30);
+	    messageInputText.setMinimumSize(new Dimension(WIDTH/2-150, 30));
 	    
 	    messageDisplayArea = new JTextArea(20, 40);
 	    messageDisplayArea.setEditable(false);
 	    messageScroll = new JScrollPane(messageDisplayArea);
+	    messageScroll.setMinimumSize(new Dimension(WIDTH/2-50, 2*HEIGHT/6-50));
 
        accountNameSearchButton = new JButton("Search");
        accountNameSearchButton.setActionCommand(USERSEARCH);
@@ -229,6 +233,7 @@ public class Launcher implements ActionListener{
         
         accountUserName = new JTextField(30);
         accountUserName.setEnabled(false);
+        accountUserName.setMinimumSize(new Dimension(WIDTH/2-250, 30));
         accountEmail = new JTextField(30);
         accountEmail.setEnabled(false);
         accountPassword = new JTextField(30);
