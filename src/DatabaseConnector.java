@@ -130,6 +130,8 @@ public class DatabaseConnector {
 	
 	//joinClan()
 	
+	//destroyClan()
+	
 	//createGroup()
 	
 	//inviteToGroup()
@@ -148,6 +150,7 @@ public class DatabaseConnector {
 
 	//returns a String as errorCode that lets the calling method know the results of the attempt
 	//based on a convention that is yet to be determined
+	
 	public String loginAttempt(String username, String password){
 	//check if username exists
 	//    if not, return errorCode for invalid login attempt, suggest to 
@@ -247,6 +250,20 @@ public class DatabaseConnector {
 			return errorCode;
 		}
 		else{
+			// FIX THIS
+			String macAddress = "loginAttemptPlaceholder";
+			
+			Calendar cal = Calendar.getInstance();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMMM.yyyy GGG hh:mm aaa z");
+	        System.out.println( sdf.format(cal.getTime()) );
+			String lastLogInTime = sdf.format(cal.getTime());
+			//macAddress, lastLogInTime, loggedIn
+			rs.updateString("lastLogInTime", lastLogInTime);
+			rs.updateString("macAddress", macAddress);
+			rs.updateInt("loggedIn",  1);
+			rs.updateRow();
+			
+			
 			errorCode = "loginSuccess";
 			System.out.println(errorCode);
 	        rs.close();
@@ -400,14 +417,7 @@ public class DatabaseConnector {
 	public String getAccountInfo(String accountID)
 	{
 		String username = ""; 
-		String accountInfo = ""; //This will be returned.
-		
-		String password;
-		String email;
-		String securityQuestion1;
-		String securityAnswer1;
-		String securityQuestion2;
-		String securityAnswer2;
+		String accountInfo = "securityInfo:" ; //This will be returned.
 		
 		ResultSet rs;
 		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
@@ -416,10 +426,9 @@ public class DatabaseConnector {
 			rs.next();
 			username = rs.getString(rs.findColumn("username"));
 			//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
-			accountInfo = username + ":";
+			accountInfo += username + ":";
 			
 			accountInfo += rs.getString(rs.findColumn("password")) + ":";
-			
 			accountInfo += rs.getString(rs.findColumn("email")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + ":";
 			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + ":";
@@ -1137,7 +1146,7 @@ public class DatabaseConnector {
 				{
 					errorCode += ":";
 				}
-				errorCode += (rs.getString("Name") + " " + rs.getString("GlobalCoords"));
+				errorCode += (rs.getString("Name") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
 				numLocations++;
 			}
 		} 
@@ -1149,12 +1158,127 @@ public class DatabaseConnector {
 	    }
 	    finally
 	    {  
+	    	System.out.println(errorCode);
 	       System.out.println("Loaded locations successfully.");
 	    }
 		
 		return errorCode;
 	}
 	
+//	//PersonID int,
+//	LastName varchar(255),
+//	FirstName varchar(255),
+//	Address varchar(255),
+//	City varchar(255)
+	public String addTable(String tableName, String fieldData)
+	{
+		String errCode = "";
+		String sql = "CREATE TABLE " + tableName + "(" + fieldData + ");";
+		
+		try {
+			int insertResult = stmt.executeUpdate(sql);
+			errCode = "createTableSuccess";
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+	    {  
+	       System.out.println("addTable completed");
+	    }
+
+		return errCode;
+	}
 	
+	public String addCharToClanTable(String clanName, String charName)
+	{
+		String tableName = clanName + "ClanTable";	
+		String errorCode ="";
+		Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMMM.yyyy GGG hh:mm aaa z");
+        System.out.println( sdf.format(cal.getTime()) );
+		String joinDate = sdf.format(cal.getTime());
+		String sql = "INSERT INTO " + tableName+ " (charName, memberLevel, joinDate, exiled) VALUES (\'" + charName + "\', \'" + "Leader" + "\', \'" + joinDate + "\', '0');";
+		System.out.println(sql);
+		int insertResult = 0;
+		try {
+			insertResult = stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if( insertResult == 1)
+			errorCode = "addCharToClanSuccess";
+		else
+			errorCode = "addCharToClanFailure";
 	
+	System.out.println(errorCode);
+	return errorCode;
+	}
+	
+	public String makeClanTable(String clanName, String charName )
+	{
+		String fieldData = "charName varchar(255), memberLevel varchar(255), joinDate varchar(255), exiled int(1)";
+		String tableName = clanName + "ClanTable";
+		String errorCode = addTable(tableName, fieldData);
+		if( errorCode.equals("createTableSuccess") )
+		{
+			Calendar cal = Calendar.getInstance();
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMMM.yyyy GGG hh:mm aaa z");
+	        System.out.println( sdf.format(cal.getTime()) );
+			String joinDate = sdf.format(cal.getTime());
+			
+			String sql = "INSERT INTO " + tableName+ " (charName, memberLevel, joinDate, exiled) VALUES (\'" + charName + "\', \'" + "Leader" + "\', \'" + joinDate + "\', '0');";
+			System.out.println(sql);
+			int insertResult = 0;
+			try {
+				insertResult = stmt.executeUpdate(sql);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if( insertResult == 1)
+				errorCode = "createClanSuccess";
+			else
+				errorCode = "createClanFailure";
+		}
+		System.out.println(errorCode);
+		return errorCode;
+    
+	}
+
+	
+	public String addLocation(String name, String xCoord, String yCoord)
+	{
+		String errorCode = "addLocation:";
+		ResultSet rs;
+		String sql;
+//		
+//		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
+//				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+//				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', \'" 
+//				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
+//		System.out.println(sql);
+		
+		int numLocations = 0;
+		try 
+		{	
+			//name, levelRequirement, xCoord, yCoord, imagePath, musicPath, itemTable, npcTable, groupRequirements, exitBox, countryViewExit, entranceBox, mapPath
+			sql = "INSERT INTO LocationTable (Name, xCoord, yCoord) VALUES (\'" + name + "\', \'" + xCoord + "\', \'" + yCoord + "\');";
+			int insertResult = stmt.executeUpdate(sql);
+			
+		}
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("added location successfully.");
+	    }
+		return errorCode;
+	}
 }
