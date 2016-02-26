@@ -1127,6 +1127,40 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
+	public String getSpecificLocationInfo(String locationName)
+	{
+		String errorCode = "localInfo:";
+		ResultSet rs;
+		String sql;
+		
+		int numLocations = 0;
+		try 
+		{	
+			//Check to make sure that the account name does not already exist.
+			sql = "SELECT * from LocationTable where name = \'" + locationName + "\';";
+			rs = stmt.executeQuery(sql);
+			
+			while( rs.next() )
+			{
+				errorCode += (rs.getString("Name") + ":" + rs.getString("levelRequirement") + ":" + rs.getString("xCoord") + ":" + rs.getString("yCoord") + ":" + rs.getString("imagePath") + ":" + rs.getString("musicPath") + ":" + rs.getString("itemTable") + ":" + rs.getString("npcTable") + ":" + rs.getString("groupRequirements") + ":" + rs.getString("exitBoxX")+ ":" + rs.getString("exitBoxY") + ":" + rs.getString("countryViewExitX") + ":" + rs.getString("countryViewExitY") + ":" + rs.getString("entranceBoxX") + ":" + rs.getString("entranceBoxY")+ ":" + rs.getString("mapPath") + ":" + rs.getString("width")+ ":" + rs.getString("height"));
+				numLocations++;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	    	System.out.println(errorCode);
+	       System.out.println("Loaded locations successfully.");
+	    }
+		
+		return errorCode;
+	}
+	
 	public String getLocations()
 	{
 		String errorCode = "loadLocations:";
@@ -1199,7 +1233,7 @@ public class DatabaseConnector {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMMM.yyyy GGG hh:mm aaa z");
         System.out.println( sdf.format(cal.getTime()) );
 		String joinDate = sdf.format(cal.getTime());
-		String sql = "INSERT INTO " + tableName+ " (charName, memberLevel, joinDate, exiled) VALUES (\'" + charName + "\', \'" + "Leader" + "\', \'" + joinDate + "\', '0');";
+		String sql = "INSERT INTO " + tableName+ " (charName, memberLevel, joinDate, exiled) VALUES (\'" + charName + "\', \'" + "Member" + "\', \'" + joinDate + "\', '0');";
 		System.out.println(sql);
 		int insertResult = 0;
 		try {
