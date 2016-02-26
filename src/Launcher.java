@@ -5,7 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -24,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -31,40 +35,68 @@ import javax.swing.border.Border;
 
 
 
-public class Launcher{
+public class Launcher implements ActionListener{
   
 	final int WIDTH = 1200;
 	final int HEIGHT = 800;
+	
+	final static String USERSEARCH = "SEARCHUSERNAME";
+	final static String CHARSEARCH = "SEARCHCHARACTERNAME";
+	final static String NETWORK = "NETWORK";
+	final static String SEND = "SENDMESSAGE";
+	final static String ACCUSERNAME = "ACCUSERNAME";
+	final static String ACCEMAIL = "ACCEMAIL";
+	final static String ACCPASSWORD = "ACCPASSWORD";
+	final static String SECQUEST1 = "SECQUES1";
+	final static String SECQUEST2 = "SECQUES2";
+	final static String SECANS1 = "SECANS1";
+	final static String SECANS2 = "SECANS2";
+	
+	//Console Panel
+	JPanel consolePanel;
+    JTextArea console;
+    JScrollPane conScroll;
+    
+    //Left Panel
+    JPanel leftPanel;
+	JTextField accountNameSearchText;
+    JTextField characterNameSearchText;
+    JTextField messageInputText;
+    JTextArea messageDisplayArea;
+    JScrollPane messageScroll;
+    JButton accountNameSearchButton;
+    JButton characterNameSearchButton;
+    JButton networkMonitorButton;
+    JButton sendMessageButton;
+    
+    //Account Panel
+    JPanel accountPanel;
+    JTextField accountUserName;
+    JTextField accountEmail;
+    JTextField accountPassword;
+    JTextField accountSecQuestion1; 
+    JTextField accountSecQuestion2;
+    JTextField accountSecAnswer1;
+    JTextField accountSecAnswer2;
+    JTextField accountMacAddress;
+    JTextField accountLastLoginTime;
+    JButton accountUserNameButton;
+    JButton accountEmailButton;
+    JButton accountPasswordButton;
+    JButton accountSecQuestion1Button;
+    JButton accountSecQuestion2Button;
+    JButton accountSecAnswer1Button;
+    JButton accountSecAnswer2Button;
+    
+	
 	
 	Font normalFont = new Font("Arial", Font.BOLD, 30);
 	Font bigFont = new Font("Arial", Font.BOLD, 60);
 
 	private JFrame frame;
-	
-	//Panels
-	private JPanel cards;
-    private JPanel connectPanel;
-    private JPanel serverMenuPanel;
-    private JPanel createAccountPanel;
-    private JPanel charSelectPanel;
-    private JPanel mainPanel;
 
-    //Text fields
-    private JTextField accountNameText;
-    private JTextField characterNameText;
-    private JPasswordField loginPasswordText;
-    public JTextArea messageArea = new JTextArea(8, 40);
-    private JTextField placeHolder = new JTextField();
-  //  private JTextField loginCharacterNameText;
-    
-    private JTextField createNameText;
-    private JTextField createEmailText;
-    private JPasswordField createPasswordText;
-    private JPasswordField createVerifyPasswordText;
-    private JTextField createSecAnswer1Text;
-    private JTextField createSecAnswer2Text;
-    JComboBox secQuestions1;
-    JComboBox secQuestions2;
+    private JPanel serverMenuPanel;
+
 	
 	
 	//Each of the elements holds a string with
@@ -73,32 +105,13 @@ public class Launcher{
 	//stats and stuff, and they're each separated
 	//by a space (or some other delimiter)
 	ArrayList<String> characters = new ArrayList<String>();
-	private JButton go;
-	private JButton go2;
-	private JButton NetworkMonitor;
+
+
 	
 	public Launcher(){
 		//connectToServer();
         frame = new JFrame();
-		cards = new JPanel(new CardLayout());
-		connectPanel = new JPanel();
-		serverMenuPanel = new JPanel();
-		createAccountPanel = new JPanel();
-		charSelectPanel = new JPanel();
-		mainPanel = new JPanel();
-		
-		initConnectPanel();
-		initServerMenuPanel();
-		initCreateAccountPanel();
-		//initCharSelectPanel();
-		
-		cards.add(connectPanel, "Connect Panel");
-		cards.add(serverMenuPanel, "Server Menu Panel");
-		cards.add(createAccountPanel, "Create Account Panel");
-		cards.add(charSelectPanel, "Char Select Panel");
-		cards.add(mainPanel, "Main Panel");
-        
-        frame.add(cards, BorderLayout.CENTER);
+		serverMenuPanel = initServerMenuPanel();
         
         frame.setTitle("Launcher");
 		frame.setSize(WIDTH, HEIGHT);
@@ -106,74 +119,291 @@ public class Launcher{
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.add(serverMenuPanel);
 	}
 	
-	public void initConnectPanel()
-	{
-        JButton connectButton = new JButton();
-        connectButton.setPreferredSize(new Dimension(400, 200));
-        connectButton.setText("Play!");
-        connectButton.setFont(bigFont);
-        connectButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                goToLogin(evt);
-            }
-        });
-        
-        connectPanel.setLayout(new GridBagLayout());
+
+	
+	public JPanel initServerMenuPanel()
+	{   
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.NONE;
         
+        //Build Console Panel
+        consolePanel = new JPanel(new GridBagLayout());
+        console = new JTextArea(30,50);
+        conScroll = new JScrollPane(console);
+        
+        console.setEditable(false);
+        conScroll.setMinimumSize(new Dimension(WIDTH-60, HEIGHT/3-60));
+        
+        c.fill = GridBagConstraints.BOTH;
+        consolePanel.add(conScroll, c);
+        consolePanel.setBorder(BorderFactory.createTitledBorder("Console"));
+        
+        
+        // Build Left Panel
+        leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setBorder(BorderFactory.createTitledBorder(""));
+        leftPanel.setMinimumSize(new Dimension(WIDTH/2-25, 2*HEIGHT/3-25));
+        
+		JLabel accountNameLabel = new JLabel("Username: ");
+		JLabel characterNameLabel = new JLabel("Character Name: ");
+		JLabel messageBoxLabel = new JLabel("Chat Messages");
+		
+		accountNameSearchText = new JTextField(30);
+	    characterNameSearchText = new JTextField(30);
+	    messageInputText =new JTextField(30);
+	    
+	    messageDisplayArea = new JTextArea(20, 40);
+	    messageDisplayArea.setEditable(false);
+	    messageScroll = new JScrollPane(messageDisplayArea);
+
+       accountNameSearchButton = new JButton("Search");
+       accountNameSearchButton.setActionCommand(USERSEARCH);
+       accountNameSearchButton.addActionListener(this);
+       
+       characterNameSearchButton = new JButton("Search");
+       characterNameSearchButton.setActionCommand(CHARSEARCH);
+       characterNameSearchButton.addActionListener(this);
+       
+       networkMonitorButton = new JButton("Network Monitoring");
+       networkMonitorButton.setActionCommand(NETWORK);
+       networkMonitorButton.addActionListener(this);
+       
+       sendMessageButton = new JButton("Send");
+       sendMessageButton.setActionCommand(SEND);
+       sendMessageButton.addActionListener(this);
+        
+       c.anchor = GridBagConstraints.CENTER;
+       c.fill = GridBagConstraints.HORIZONTAL;
+        
+       c.gridx = 0;
+       c.gridy = 0;
+       leftPanel.add(accountNameLabel, c);
+       c.gridy = 1;
+       leftPanel.add(characterNameLabel, c);
+      
+       c.gridx = 1;
+       c.gridy = 0;
+       leftPanel.add(accountNameSearchText, c);
+       c.gridy = 1;
+       leftPanel.add(characterNameSearchText, c);
+        
+       c.insets = new Insets(5,5,5,5);
+        
+       c.gridy=0;
+       c.gridx = 2;
+       leftPanel.add(characterNameSearchButton, c);
+       c.gridy = 1;
+       leftPanel.add(accountNameSearchButton, c);
+       
+       c.insets = new Insets(0,0,20,0);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        leftPanel.add(networkMonitorButton, c);
+        c.insets = new Insets(0,0,0,0);
+        
+        c.gridx = 0;
+        c.gridy = 4;
+        leftPanel.add(messageBoxLabel, c);
+        
+        c.gridy = 5;
+        leftPanel.add(messageScroll, c);
+        
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 6;
+        c.fill = GridBagConstraints.BOTH;
+        leftPanel.add(messageInputText, c);
+        
+       // c.fill = GridBagConstraints.NONE;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        leftPanel.add(sendMessageButton, c);
+        
+        
+        //Build Account Panel
+        accountPanel = new JPanel(new GridBagLayout());
+        
+        accountUserName = new JTextField(30);
+        accountUserName.setEnabled(false);
+        accountEmail = new JTextField(30);
+        accountEmail.setEnabled(false);
+        accountPassword = new JTextField(30);
+        accountPassword.setEnabled(false);
+        accountSecQuestion1 = new JTextField(30);
+        accountSecQuestion1.setEnabled(false);
+        accountSecQuestion2 = new JTextField(30);
+        accountSecQuestion2.setEnabled(false);
+        accountSecAnswer1 = new JTextField(30);
+        accountSecAnswer1.setEnabled(false);
+        accountSecAnswer2 = new JTextField(30);
+        accountSecAnswer2.setEnabled(false);
+        accountMacAddress = new JTextField(30);
+        accountMacAddress.setEnabled(false);
+        accountLastLoginTime = new JTextField(30);
+        accountLastLoginTime.setEnabled(false);
+        
+        JLabel userName = new JLabel("User Name: ");
+        userName.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel email = new JLabel("Email: ");
+        email.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel password = new JLabel("Password: ");
+        password.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel secQuest1 = new JLabel("Security 1: ");
+        secQuest1.setHorizontalAlignment(JLabel.CENTER);
+        JLabel secQuest2 = new JLabel("Security 2: ");
+        secQuest2.setHorizontalAlignment(JLabel.CENTER);
+        JLabel question1 = new JLabel("Question: ");
+        question1.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel answer1 = new JLabel("Answer: ");
+        answer1.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel question2 = new JLabel("Question: ");
+        question2.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel answer2 = new JLabel("Answer: ");
+        answer2.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel macAdress = new JLabel("Mac Adress: ");
+        macAdress.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel lastLogin = new JLabel("Last Login Time: ");
+        lastLogin.setHorizontalAlignment(JLabel.RIGHT);
+    	
+        accountUserNameButton = new JButton("Change");
+        accountUserNameButton.setActionCommand(ACCUSERNAME);
+        accountUserNameButton.addActionListener(this);
+        
+        accountEmailButton = new JButton("Change");
+        accountEmailButton.setActionCommand(ACCEMAIL);
+        accountEmailButton.addActionListener(this);
+        
+        accountPasswordButton = new JButton("Change");
+        accountPasswordButton.setActionCommand(ACCPASSWORD);
+        accountPasswordButton.addActionListener(this);
+        
+        accountSecQuestion1Button = new JButton("Change");
+        accountSecQuestion1Button.setActionCommand(SECQUEST1);
+        accountSecQuestion1Button.addActionListener(this);
+        
+        accountSecQuestion2Button = new JButton("Change");
+        accountSecQuestion2Button.setActionCommand(SECQUEST2);
+        accountSecQuestion2Button.addActionListener(this);
+        
+        accountSecAnswer1Button = new JButton("Change");
+        accountSecAnswer1Button.setActionCommand(SECANS1);
+        accountSecAnswer1Button.addActionListener(this);
+        
+        accountSecAnswer2Button = new JButton("Change");
+        accountSecAnswer2Button.setActionCommand(SECANS2);
+        accountSecAnswer2Button.addActionListener(this);
+        
+        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(2, 0, 2, 0);
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        accountPanel.add(userName, c);
         c.gridx = 1;
+        accountPanel.add(accountUserName, c);
+        c.gridx = 2;
+        accountPanel.add(accountUserNameButton, c);
+        
+        c.gridx = 0;
         c.gridy = 1;
-        connectPanel.add(connectButton, c);
-	}
-	
-	public void initServerMenuPanel()
-	{
-		
-		//collecting code to make the chat box
-		//JFrame frame = new JFrame("Chatter");
-	    JTextField textField = new JTextField(20);
-	    
-	    JTextArea consoleArea = new JTextArea(8,40);
-	    
-	    JPanel leftPanel = new JPanel(new GridBagLayout());
-        JPanel rightPanel = new JPanel(new GridBagLayout());
-        mainPanel = new JPanel(new GridBagLayout());
-	    
-	    JLabel test = new JLabel();
-	    test.setText("Test test test");
-		
-		messageArea.setEditable(false);
-		consoleArea.setEditable(false);
-		
-		JLabel accountNameLabel = new JLabel();
-		JLabel characterNameLabel = new JLabel();
-		go = new JButton();
-		go2 = new JButton();
-		NetworkMonitor = new JButton();
-		
-		
-		accountNameText = new JTextField();
-		characterNameText = new JTextField();
-		
-		
-		//experimental code lolz
-		
-		JLabel serverHostnameLabel = new JLabel();
-		
+        accountPanel.add(email, c);
+        c.gridx = 1;
+        accountPanel.add(accountEmail, c);
+        c.gridx = 2;
+        accountPanel.add(accountEmailButton, c);
+        
+        c.gridx = 0;
+        c.gridy = 2;
+        accountPanel.add(password, c);
+        c.gridx = 1;
+        accountPanel.add(accountPassword, c);
+        c.gridx = 2;
+        accountPanel.add(accountPasswordButton, c);
+        
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        accountPanel.add(secQuest1, c);
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        accountPanel.add(question1, c);
+        c.gridx = 1;
+        accountPanel.add(accountSecQuestion1, c);
+        c.gridx = 2;
+        accountPanel.add(accountSecQuestion1Button, c);
+        c.gridy = 5;
+        c.gridx = 0;
+        accountPanel.add(answer1, c);
+        c.gridx = 1;
+        accountPanel.add(accountSecAnswer1, c);
+        c.gridx = 2;
+        accountPanel.add(accountSecAnswer1Button, c);
+        
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 3;
+        accountPanel.add(secQuest2, c);
+        c.gridy = 7;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        accountPanel.add(question2, c);
+        c.gridx = 1;
+        accountPanel.add(accountSecQuestion2, c);
+        c.gridx = 2;
+        accountPanel.add(accountSecQuestion2Button, c);
+        c.gridy = 8;
+        c.gridx = 0;
+        accountPanel.add(answer2, c);
+        c.gridx = 1;
+        accountPanel.add(accountSecAnswer2, c);
+        c.gridx = 2;
+        accountPanel.add(accountSecAnswer2Button, c);
+        
+        c.gridx = 0; c.gridy = 9;
+        accountPanel.add(macAdress, c);
+        c.gridx = 1; c.gridwidth =2;
+        accountPanel.add(accountMacAddress, c);
+        
+        c.gridwidth = 1;
+        c.gridx = 0; c.gridy = 10;
+        accountPanel.add(lastLogin, c);
+        c.gridx = 1; c.gridwidth =2;
+        accountPanel.add(accountLastLoginTime, c);
+        
+        c.insets = new Insets(0, 0, 0, 0);
+        
+      //Build Right Panel
+        JTabbedPane rightPanel = new JTabbedPane();
+        rightPanel.setMinimumSize(new Dimension(WIDTH/2-25, 2*HEIGHT/3-25));
+        
+        JTextArea networkMonitorText = new JTextArea(30,30);
+        JScrollPane networkScroll = new JScrollPane(networkMonitorText);
+        
+        JTextArea charText = new JTextArea(30,30);
+        JScrollPane charScroll = new JScrollPane(charText);
+        
+        JTextArea userText = new JTextArea(30,30);
+        JScrollPane userScroll = new JScrollPane(userText);
+        
+        rightPanel.addTab("Account Info", accountPanel);
+        rightPanel.addTab("Character Info", charScroll);
+        rightPanel.addTab("Networking", networkScroll);
         
         
-        accountNameLabel.setText("Username: ");
-        characterNameLabel.setText("Character Name: ");
-        go.setText("Search");
-        go2.setText("Search");
+        //Build Main Panel
+        JPanel mainPanel = new JPanel(new GridBagLayout());
         
+        JLabel serverHostnameLabel = new JLabel();
+        serverHostnameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         InetAddress addr;
 		try {
 			addr = InetAddress.getLocalHost();
-			 serverHostnameLabel.setText("Server Hostname : " + addr);
+			 serverHostnameLabel.setText("Server Hostname : " + addr.getHostName());
 			//serverHostnameLabel.setText("test");
 		       
 		} catch (UnknownHostException e) {
@@ -181,558 +411,141 @@ public class Launcher{
 			e.printStackTrace();
 		}
         
-		accountNameText.setPreferredSize(new Dimension(40, 40));
-		characterNameText.setPreferredSize(new Dimension(40, 40));
-		
-		JPanel placeholderPanel = new JPanel(new GridBagLayout());
-		placeHolder.setPreferredSize(new Dimension(200, 400));
-		
-        GridBagConstraints conts = new GridBagConstraints();
-        conts.fill = GridBagConstraints.VERTICAL;
-        conts.gridx = 0;
-        conts.gridy = 0;
-        placeholderPanel.add(placeHolder, conts);
-        placeholderPanel.setBorder(BorderFactory.createTitledBorder("Placeholder Border"));
-        placeholderPanel.setPreferredSize(new Dimension(200, 400));
-        
-		//placeHolder.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		//placeHolder.setName("This is placeHolder, our happy panel that can't be found.");
-        
-        
-        NetworkMonitor.setText("Network Monitor");
-        
-        
-        go.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchAccounts(evt);
-            }
-        });
-        
-        go2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchChars(evt);
-            }
-        });
-        
-        NetworkMonitor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                goToCreateAccount(evt);
-            }
-        });
-        
-        
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.NONE;
-        
-        c.gridx = 0;
-        c.gridy = 0;        
-        leftPanel.setBorder(BorderFactory.createTitledBorder("Left Panel Border"));
-        leftPanel.setPreferredSize(new Dimension(500, 700));
-        
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.CENTER;
         c.gridx = 0;
         c.gridy = 0;
-        rightPanel.add(placeholderPanel, c);
-        rightPanel.setBorder(BorderFactory.createTitledBorder("Right Panel Border"));
-        rightPanel.setPreferredSize(new Dimension(500, 700));
+        c.gridwidth = 2;
+        mainPanel.add(serverHostnameLabel, c);
         
         c.gridx = 0;
         c.gridy = 1;
+        c.gridwidth = 1;
         mainPanel.add(leftPanel, c);
         
         c.gridx = 1;
         c.gridy = 1;
+        c.gridwidth = 1;
         mainPanel.add(rightPanel, c);
-
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Panel Border"));
-      
-        c.gridx = 0;
-        c.gridy = 0;
-        mainPanel.add(serverHostnameLabel, c);
-       
         
-        c.gridx = 0;
-        c.gridy = 0;
-        leftPanel.add(accountNameLabel, c);
-      
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 1;
-        leftPanel.add(accountNameText, c);
-        
-
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 1;
-        c.gridy = 1;
-        leftPanel.add(go, c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        leftPanel.add(characterNameLabel, c);
-
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 3;
-        leftPanel.add(characterNameText, c);
-        
-
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 1;
-        c.gridy = 3;
-        leftPanel.add(go2, c);
-
-        c.gridx = 0;
-        c.gridy = 4;
-        leftPanel.add(NetworkMonitor, c);
-        
-        c.gridx = 0;
-        c.gridy = 5;
-        leftPanel.add(messageArea, c);
-        
-        c.gridx = 0;
-        c.gridy = 6;
-        leftPanel.add(textField, c);
-        
-        c.gridx = 0;
-        c.gridy = 7;
-        leftPanel.add(consoleArea, c);
-        
-  
-	}
-	
-	public void initCreateAccountPanel()
-	{
-		JLabel createNameLabel = new JLabel();
-		JLabel createEmailLabel = new JLabel();
-		JLabel createPasswordLabel = new JLabel();
-		JLabel createVerifyPasswordLabel = new JLabel();
-        
-        createNameText = new JTextField();
-        createEmailText = new JTextField();
-        createPasswordText = new JPasswordField();
-        createVerifyPasswordText = new JPasswordField();
-        createSecAnswer1Text = new JTextField();
-        createSecAnswer2Text = new JTextField();
-        JButton createButton = new JButton();
-        JButton createAccountBackButton = new JButton();
-        
-        String[] questions1 = { "What is your mothers maiden name", "Sec Question 2", "Sec Question 3" };
-        String[] questions2 = { "Name of your first pet", "Sec Question 2", "Sec Question 3" };
-        secQuestions1 = new JComboBox(questions1);
-        secQuestions1.setSelectedIndex(0);
-        secQuestions2 = new JComboBox(questions2);
-        secQuestions2.setSelectedIndex(0);
-        
-        createNameLabel.setText("Username: ");
-        createEmailLabel.setText("Email: ");
-        createPasswordLabel.setText("Password: ");
-        createVerifyPasswordLabel.setText("Re-enter password: ");
-        createNameText.setPreferredSize(new Dimension(200, 40));
-        createEmailText.setPreferredSize(new Dimension(200, 40));
-        createPasswordText.setPreferredSize(new Dimension(200, 40));
-        createVerifyPasswordText.setPreferredSize(new Dimension(200, 40));
-        createSecAnswer1Text.setPreferredSize(new Dimension(200, 40));
-        createSecAnswer2Text.setPreferredSize(new Dimension(200, 40));
-        secQuestions1.setPreferredSize(new Dimension(300, 40));
-        secQuestions2.setPreferredSize(new Dimension(300, 40));
-        
-        createButton.setText("Create!");
-        //createButton.setFont(normalFont);
-        createAccountBackButton.setText("<< Back");
-        
-        createButton.setPreferredSize(new Dimension(100, 50));
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createAccount(evt);
-            }
-        });
-
-        createAccountBackButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createAccountGoBack(evt);
-            }
-        });
-        
-        createAccountPanel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.NONE;
-        
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        createAccountPanel.add(createAccountBackButton, c);
-        
-
-        c.anchor = GridBagConstraints.CENTER;
-        
-        c.gridx = 1;
-        c.gridy = 1;
-        createAccountPanel.add(createNameLabel, c);
-        
-        c.gridx = 1;
-        c.gridy = 2;
-        createAccountPanel.add(createEmailLabel, c);
-        
-        c.gridx = 1;
-        c.gridy = 3;
-        createAccountPanel.add(createPasswordLabel, c);
-        
-        c.gridx = 1;
-        c.gridy = 4;
-        createAccountPanel.add(createVerifyPasswordLabel, c);
-        
-        c.gridx = 1;
-        c.gridy = 5;
-        createAccountPanel.add(secQuestions1, c);
-        
-        c.gridx = 1;
-        c.gridy = 6;
-        createAccountPanel.add(secQuestions2, c);
-        
-        c.gridx = 2;
-        c.gridy = 1;
-        createAccountPanel.add(createNameText, c);
-        
-        c.gridx = 2;
-        c.gridy = 2;
-        createAccountPanel.add(createEmailText, c);
-        
-        c.gridx = 2;
-        c.gridy = 3;
-        createAccountPanel.add(createPasswordText, c);
-        
-        c.gridx = 2;
-        c.gridy = 4;
-        createAccountPanel.add(createVerifyPasswordText, c);
-        
-        c.gridx = 2;
-        c.gridy = 5;
-        createAccountPanel.add(createSecAnswer1Text, c);
-        
-        c.gridx = 2;
-        c.gridy = 6;
-        createAccountPanel.add(createSecAnswer2Text, c);
-
-        c.gridx = 2;
-        c.gridy = 7;
-        createAccountPanel.add(createButton, c);
+        c.gridx=0;
+        c.gridy=2;
+        c.gridwidth = 2;
+        mainPanel.add(consolePanel, c);
+        accountUserName.setText("TEst");
+        return mainPanel;
         
 	}
 	
-	public void initCharSelectPanel()
-	{
-		charSelectPanel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.NONE;
-        
-		JButton[] buttons = new JButton[5];
-        JLabel[] labels = new JLabel[5];
-	/*	for(int x = 0; x < characters.size(); x++)
-		{
-			//System.out.println("Element number " + x + " is " + characters.get(x));
-			String[] charInfo = characters.get(x).split(" ");
-			JButton button = new JButton(charInfo[0]);
-					
-			buttons[x] = new JButton();
-			//Adds the characters name to display on the button
-	        buttons[x].setText(charInfo[0]);
-	        buttons[x].setPreferredSize(new Dimension(200, 200));
-	        buttons[x].addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                selectChar(evt);
-	            }
-	        });
-	        //Sets the label with the characters name and the next piece of info. Maybe level?
-	        labels[x] = new JLabel();
-	        labels[x].setText(charInfo[0] + ", level " + charInfo[2]);
-	        
-	        c.gridx = 0;
-	        c.gridy = x;
-	        charSelectPanel.add(button, c);
-		}
-	*/	
-		JButton character1Button = new JButton();
-		JButton character2Button = new JButton();
-		for(int x = 0; x < 2; x++)
-		{
-			String[] charInfo = characters.get(x).split(" ");
-			if(x == 0)
-				character1Button.setText(charInfo[0]);
-			else
-				character2Button.setText(charInfo[0]);
-			//character1Button.setPreferredSize(new Dimension(200, 200));
-			character1Button.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                selectChar(evt);
-	            }
-	        });
-		}
-		
-		c.gridx = 0;
-        c.gridy = 0;
-        charSelectPanel.add(character1Button, c);
-        
-        c.gridx = 0;
-        c.gridy = 1;
-        charSelectPanel.add(character2Button, c);
-		
-		
-		JButton logoutButton = new JButton();
-		logoutButton.setText("Logout");
-        logoutButton.setPreferredSize(new Dimension(100, 50));
-		
-        
-        c.gridx = 2;
-        c.gridy = 0;
-        charSelectPanel.add(logoutButton, c);
-        
-        
-        int lastY = 0;
-    /*    for(int y = 0; y < characters.size(); y++)
-        {
-        	JButton b = buttons[y];
-        	System.out.println("One button's text is: " + buttons[y].isEnabled());
-        	System.out.println("Adding a button!");
-        	c.gridx = 0;
-            c.gridy = y;
-            charSelectPanel.add(b, c);
-            lastY++;
-        }
-     */   
-        if(characters.size() < 5)
-		{
-        	JButton addNewCharacterButton;
-			addNewCharacterButton = new JButton();
-			addNewCharacterButton.setText("Create New Character");
-			addNewCharacterButton.setPreferredSize(new Dimension(100, 100));
-			addNewCharacterButton.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                createNewCharacter(evt);
-	            }
-	        });
+//		get message to send =  messageText.getText();
+//		get account name to search = accountNameText.getText();
+//		get the idea = you
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		if(arg0.getActionCommand() == USERSEARCH){
 			
-			c.gridx = 0;
-            c.gridy = 500;
-            charSelectPanel.add(addNewCharacterButton, c);
-		}
-        
-  /*      for(int y = 0; y < characters.size(); y++)
-        {
-        	c.gridx = 1;
-            c.gridy = y;
-            charSelectPanel.add(labels[y], c);
-        }
-        */
-	}
-	
-	public void switchCards(String cardName)
-	{
-		CardLayout cl = (CardLayout)(cards.getLayout());
-        cl.show(cards, cardName);
-	}
-    
-	private void goToLogin(ActionEvent evt) {
-		//Maybe check to make sure we're connected to server first, before
-		//switching over to the login screen??
-		switchCards("Main Panel");
-    }
-	
-	private void logIn(ActionEvent evt)
-	{
-//		String username = loginNameText.getText();
-//		String password = String.valueOf(loginPasswordText.getPassword());
-//		if(username.equals(""))
-//		{
-//			loginPasswordText.setText("");
-//			JOptionPane.showMessageDialog(null, "Username field is empty.", "ERROR", 
-//					JOptionPane.INFORMATION_MESSAGE);
-//		}
-//		else if(password.equals(""))
-//		{
-//			loginNameText.setText("");
-//			JOptionPane.showMessageDialog(null, "Password field is empty.", "ERROR", 
-//					JOptionPane.INFORMATION_MESSAGE);
-//		}
-//		else 
-//		{
-//			client.sendMessage("LOGIN:" + username + ":" + password);
-//		}
-	}
-	
-	private void createAccount(ActionEvent evt)
-	{
-		String username = createNameText.getText();
-		String email = createEmailText.getText();
-		String password = String.valueOf(createPasswordText.getPassword());
-		String passwordVerify = String.valueOf(createVerifyPasswordText.getPassword());
-		String securityQuestion1 = (String) secQuestions1.getSelectedItem();
-		String securityQuestion2 = (String) secQuestions2.getSelectedItem();
-		String securityAnswer1 = createSecAnswer1Text.getText();
-		String securityAnswer2 = createSecAnswer2Text.getText();
-		/*
-		System.out.println("Creating account...");
-		System.out.println("Username: " + username);
-		System.out.println("Email: " + email);
-		System.out.println("Password: " + password);
-		System.out.println("Verified Password: " + passwordVerify);
-		System.out.println("Security question: " + securityQuestion1);
-		System.out.println("Security answer: " + securityAnswer1);
-		*/
-		
-		if(!password.equals(passwordVerify))
-		{
-			System.out.println("Passwords do not match");
-		}
-		if(username.equals(""))
-		{
-			createNameText.setText("");
-			createEmailText.setText("");
-			createPasswordText.setText("");
-			createVerifyPasswordText.setText("");
-			createSecAnswer1Text.setText("");
-			createSecAnswer2Text.setText("");
+		} else if(arg0.getActionCommand() == CHARSEARCH){
 			
-			JOptionPane.showMessageDialog(null, "Please enter a username.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else if(email.equals(""))
-		{
-			createNameText.setText("");
-			createEmailText.setText("");
-			createPasswordText.setText("");
-			createVerifyPasswordText.setText("");
-			createSecAnswer1Text.setText("");
-			createSecAnswer2Text.setText("");
+		}else if(arg0.getActionCommand() == NETWORK){
 			
-			JOptionPane.showMessageDialog(null, "Please enter an email.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
+		}else if(arg0.getActionCommand() == SEND){
+			//just an exsample definatly need to be replaced
+			messageDisplayArea.setText(messageDisplayArea.getText()+"\n"+messageInputText.getText());
+			messageInputText.setText("");
 		}
-		else if(password.equals(""))
+		else if(arg0.getActionCommand() == ACCUSERNAME)
 		{
-			createNameText.setText("");
-			createEmailText.setText("");
-			createPasswordText.setText("");
-			createVerifyPasswordText.setText("");
-			createSecAnswer1Text.setText("");
-			createSecAnswer2Text.setText("");
 			
-			JOptionPane.showMessageDialog(null, "Please enter a password.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
+			if(accountUserName.isEditable())
+			{
+				accountUserName.setEnabled(false);
+				accountUserNameButton.setText("Change");
+				//Functionality to save the new username
+			} 
+			else 
+			{
+				System.out.println("HIT");
+				accountUserName.setEnabled(true);
+				accountUserNameButton.setText("Save");
+			}
 		}
-		else if(passwordVerify.equals(""))
-		{
-			createNameText.setText("");
-			createEmailText.setText("");
-			createPasswordText.setText("");
-			createVerifyPasswordText.setText("");
-			createSecAnswer1Text.setText("");
-			createSecAnswer2Text.setText("");
+		else if(arg0.getActionCommand() == ACCEMAIL){
 			
-			JOptionPane.showMessageDialog(null, "Please verify password.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else if(!password.equals(passwordVerify))
-		{
-			createPasswordText.setText("");
-			createVerifyPasswordText.setText("");
+		}else if(arg0.getActionCommand() == ACCPASSWORD){
 			
-			JOptionPane.showMessageDialog(null, "Passwords do not match.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else if(securityAnswer1.equals(""))
-		{
-			JOptionPane.showMessageDialog(null, "Please enter a security answer.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else if(securityAnswer2.equals(""))
-		{
-			JOptionPane.showMessageDialog(null, "Please enter a security answer.", "ERROR", 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else 
-		{
-//			client.sendMessage("CREATEACCOUNT:" + username + ":" 
-//					+ email + ":" + password + ":" 
-//					+ securityQuestion1 + ":" 
-//					+ securityAnswer1 + ":"
-//					+ securityQuestion2 + ":"
-//					+ securityAnswer2);
+		}else if(arg0.getActionCommand() == SECQUEST1){
+			
+		}else if(arg0.getActionCommand() == SECQUEST2){
+			
+		}else if(arg0.getActionCommand() == SECANS1){
+			
+		}else if(arg0.getActionCommand() == SECANS2){
+	
 		}
 	}
 	
-	private void createAccountGoBack(ActionEvent evt)
-	{
-		createNameText.setText("");
-		createEmailText.setText("");
-		createPasswordText.setText("");
-		createVerifyPasswordText.setText("");
-		createSecAnswer1Text.setText("");
-		createSecAnswer2Text.setText("");
-		switchCards("Login Panel");
-	}
-	
-	
-	private void searchChars(ActionEvent evt)
-	{
-//		loginNameText.setText("");
-//		loginPasswordText.setText("");
-//		switchCards("Create Account Panel");
-		//this.placeHolder.setText("Test");
-		
-		placeHolder.setText(Main.db.getCharInfo(characterNameText.getText()) + "\n");
-		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
-	}
-	
-	private void searchAccounts(ActionEvent evt)
-	{
-//		loginNameText.setText("");
-//		loginPasswordText.setText("");
-//		switchCards("Create Account Panel");
-		//this.placeHolder.setText("Test");
-		
-		placeHolder.setText(Main.db.getAccountInfo(accountNameText.getText()) + "\n");
-		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
-	}
-	
-	private void goToCreateAccount(ActionEvent evt)
-	{
-//		loginNameText.setText("");
-//		loginPasswordText.setText("");
-//		switchCards("Create Account Panel");
-	}
-	
-	private void selectChar(ActionEvent evt)
-	{
-		System.out.println("Doesn't do anything yet...");
-	}
-	
-	public void createNewCharacter(ActionEvent evt)
-	{
-		//Create new character...
-	}
-	
-//	public void connectToServer()
+//	private void searchChars(ActionEvent evt)
 //	{
-//		client = new ChatClient(this);
-//        try {
-//			client.start();
-//		} 
-//        catch (Exception e) {
-//			e.printStackTrace();
+////		loginNameText.setText("");
+////		loginPasswordText.setText("");
+////		switchCards("Create Account Panel");
+//		//this.placeHolder.setText("Test");
+//		
+//		placeHolder.setText(Main.db.getCharInfo(characterNameText.getText()) + "\n");
+//		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
+//	}
+//	
+//	private void searchAccounts(ActionEvent evt)
+//	{
+////		loginNameText.setText("");
+////		loginPasswordText.setText("");
+////		switchCards("Create Account Panel");
+//		//this.placeHolder.setText("Test");
+//		
+//		placeHolder.setText(Main.db.getAccountInfo(accountNameText.getText()) + "\n");
+//		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
+//	}
+//	
+//	private void goToCreateAccount(ActionEvent evt)
+//	{
+////		loginNameText.setText("");
+////		loginPasswordText.setText("");
+////		switchCards("Create Account Panel");
+//	}
+//	
+//	private void selectChar(ActionEvent evt)
+//	{
+//		System.out.println("Doesn't do anything yet...");
+//	}
+//	
+//	public void createNewCharacter(ActionEvent evt)
+//	{
+//		//Create new character...
+//	}
+//	
+////	public void connectToServer()
+////	{
+////		client = new ChatClient(this);
+////        try {
+////			client.start();
+////		} 
+////        catch (Exception e) {
+////			e.printStackTrace();
+////		}
+////	}
+//	
+//	public void loadCharacterInfo(String[] characterList)
+//	{
+//		//Each element in the characters array holds a line of information
+//		//about a specific character, each of the fields separated
+//		//by a space (or some other delimiter)
+//		
+//		//Starts at 1, because the first element in this list contains the string "loginSuccess"
+//		for(int x = 1; x < characterList.length; x++)
+//		{
+//			characters.add(characterList[x]);
 //		}
 //	}
-	
-	public void loadCharacterInfo(String[] characterList)
-	{
-		//Each element in the characters array holds a line of information
-		//about a specific character, each of the fields separated
-		//by a space (or some other delimiter)
-		
-		//Starts at 1, because the first element in this list contains the string "loginSuccess"
-		for(int x = 1; x < characterList.length; x++)
-		{
-			characters.add(characterList[x]);
-		}
-	}
 	
 }
