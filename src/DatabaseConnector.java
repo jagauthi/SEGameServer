@@ -132,13 +132,17 @@ public class DatabaseConnector {
 	
 	//destroyClan()
 	
-	//createGroup()
 	
-	//inviteToGroup()
-	
-	//leaveGroup()
-	
-	//joinGroup()
+	//For now, we are going to try to handle groups client side, and only relay
+	//messages through the server to other clients without storing
+	//any group data in the database.
+//	//createGroup()
+//	
+//	//inviteToGroup()
+//	
+//	//leaveGroup()
+//	
+//	//joinGroup()
 	
 	//generateEncounter()
 	
@@ -187,7 +191,7 @@ public class DatabaseConnector {
 	System.out.println("numResults = " + numResults);
     
 	
-	//If there is no results for the entered username
+	//If there is no result for the entered username...
 	if ( numResults == 0 ) {
 	      System.out.println("No account found with username: " + username);
 	         rs.close();
@@ -937,11 +941,18 @@ public class DatabaseConnector {
 		String sql;
 		ResultSet rs;
 		String ofAllStrings = "";
+		String location = "countryView";
 		
 		try 
 		{	
+			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName +"\' ;";
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			location = rs.getString("location");
+			rs.close();
+			
 			//Check to make sure that the account name does not already exist.
-			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\' and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
+			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\' and location = \'" + location + "\' and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
 					+ " loggedIn = '1' and yCoord > \'" + (Integer.parseInt(yPos) - 300) + "\' and yCoord < \'" + (Integer.parseInt(yPos) + 300) + "\' ;";
 			rs = stmt.executeQuery(sql);
 	        while( rs.next() )
