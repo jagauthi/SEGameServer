@@ -986,6 +986,66 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
+	
+	public String updateCharPosition(String charName, String xCoord, String yCoord, String location ){
+		String errorCode = "attemptingCharPosUpdate";
+		ResultSet rs;
+		String sql = "UPDATE CharacterInfoTable set xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\' WHERE characterName = \'" + charName + "\';";
+		
+		//System.out.println(sql);
+		try
+		{
+			String sqlCheck = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sqlCheck);
+			int numResults = 0;
+			while( rs.next() )
+			{
+				numResults++;
+			}
+			rs.beforeFirst();
+			rs.next();
+			System.out.println("char's with name before insert...  numResults = " + numResults);
+		    
+			
+			//If there is no results for the entered charName
+			if ( numResults == 0 ) {
+			      System.out.println("No character found with name: " + charName);
+			      rs.close();
+			      errorCode = "char name not found";
+			      return errorCode;
+			      
+			 }
+			//check for existing char name
+			else if ( numResults == 1 ) {
+				
+				System.out.println("Charname found");
+			}
+			else {
+				rs.close();
+				return "twoRowsWithSameCharNameFoundWTF";
+			}
+			
+			int insertResult = stmt.executeUpdate(sql);
+			if( insertResult == 1)
+			{
+				errorCode = "charUpdated";
+				rs.close();
+				return errorCode;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("update character attempt completed");
+	    }
+		return errorCode;
+	}
+	
 	//Test this!!
 	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
 	{
@@ -1002,7 +1062,6 @@ public class DatabaseConnector {
 		{
 			mana = Integer.parseInt(charStatInt) * 2 ;
 			health = Integer.parseInt(con) * 2 ;
-			
 		}
 		else 
 		{
@@ -1011,10 +1070,6 @@ public class DatabaseConnector {
 		}
 		String sql = "UPDATE CharacterInfoTable set loggedIn = \'" + loggedIn + "\', class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender + "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience + "\', pointsToSpend = \'" + pointsToSpend + "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\', clanName = \'" + clanName + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
 		
-//		sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
-//				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-//				+ "VALUES ( \'" + charName + "\', \'" + accountID + "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', '0', '0:0:0:0:0:0', \'" 
-//				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
 		{
