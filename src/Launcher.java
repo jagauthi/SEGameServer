@@ -195,12 +195,12 @@ public class Launcher implements ActionListener{
        leftPanel.add(characterNameSearchText, c);
         
        c.insets = new Insets(5,5,5,5);
-        
+       
        c.gridy=0;
        c.gridx = 2;
-       leftPanel.add(characterNameSearchButton, c);
-       c.gridy = 1;
        leftPanel.add(accountNameSearchButton, c);
+       c.gridy = 1;
+       leftPanel.add(characterNameSearchButton, c);
        
        c.insets = new Insets(0,0,20,0);
         c.gridx = 0;
@@ -450,6 +450,38 @@ public class Launcher implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand() == USERSEARCH){
+			String accountInfo = Main.db.getAccountInfo( Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) ) );
+			String[] tokens = accountInfo.split(":");
+			
+			accountUserName.setText(tokens[1]);
+			accountPassword.setText(tokens[2]);
+			accountEmail.setText(tokens[3]);
+			accountSecQuestion1.setText(tokens[4]);
+			accountSecAnswer1.setText(tokens[5]);
+			accountSecQuestion2.setText(tokens[6]);
+			accountSecAnswer2.setText(tokens[7]);
+			accountMacAddress.setText(tokens[8]);
+	        accountLastLoginTime.setText(tokens[9]);
+			
+			
+//			accountUserName = new JTextField(30);
+
+//	        accountEmail = new JTextField(30);
+//	        accountEmail.setEnabled(false);
+//	        accountPassword = new JTextField(30);
+//	        accountPassword.setEnabled(false);
+//	        accountSecQuestion1 = new JTextField(30);
+//	        accountSecQuestion1.setEnabled(false);
+//	        accountSecQuestion2 = new JTextField(30);
+//	        accountSecQuestion2.setEnabled(false);
+//	        accountSecAnswer1 = new JTextField(30);
+//	        accountSecAnswer1.setEnabled(false);
+//	        accountSecAnswer2 = new JTextField(30);
+//	        accountSecAnswer2.setEnabled(false);
+//	        accountMacAddress = new JTextField(30);
+//	        accountMacAddress.setEnabled(false);
+//	        accountLastLoginTime = new JTextField(30);
+//	        accountLastLoginTime.setEnabled(false);
 			
 		} else if(arg0.getActionCommand() == CHARSEARCH){
 			
