@@ -12,7 +12,7 @@ public class Main {
         cs.start();
         db = new DatabaseConnector();
         
-        new Launcher();
+        Launcher launch = new Launcher();
     
         //testing code below this line...
     //db.createAccount("jagauthi2","newPass", "realemail@email.not", "securityQuestion1", "securityAnswer1", "securityQuestion2", "securityAnswer2");
