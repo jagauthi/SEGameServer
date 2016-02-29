@@ -95,7 +95,7 @@ public class Handler extends Thread {
                     	}
                     	else
                     	{
-                    		out.println(errCode);	
+                    		 out.println(errCode);	
                     	}
                     	break;
                     case "DELETECHAR":
@@ -104,10 +104,10 @@ public class Handler extends Thread {
                     	//out.println(errCode);
                     	out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
                     	break;
-                    case "UPDATECHARINFO":
+                    case "UPDATECHARPOS":
                     	System.out.println("calling db.updateCharInfo() method");
-                    	errCode = Main.db.updateCharPosition(tokens[1],tokens[14], tokens[15],tokens[16]);
-                    	out.println(errCode + ":" + Main.db.broadcastGameChanges(tokens[1], tokens[14],tokens[15]));//sends charname, x, and y position data
+                    	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4]);
+                    	//out.println(errCode + ":" + Main.db.broadcastGameChanges(tokens[1], tokens[2],tokens[3], tokens[4]));//sends charname, x, and y position data
                     	break;
                     case "GETLOCALINFO":
                     	System.out.println("calling db.getSpecificLocationInfo() method");
@@ -141,7 +141,7 @@ public class Handler extends Thread {
                     	//Also need to send this message to the chat box on the server menu...
                         //Main.launch.messageArea.append(line.substring(8) + "\n");
                     	for (PrintWriter writer : writers) {
-                            writer.println("MESSAGE " + name + ": " + input);
+                            writer.println(input + ": " + name );
                     	   }
                             break;	
 //                    case "TESTLOGOUT":
