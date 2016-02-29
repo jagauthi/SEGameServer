@@ -708,7 +708,7 @@ public class DatabaseConnector {
 		
 		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
 				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '16', '9', \'" 
+				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', \'" 
 				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
@@ -931,7 +931,7 @@ public class DatabaseConnector {
 	//Send all clients updated positions of other players in their local area, as well as notifications of events.
 		//Events can include zoning, special encounters, and other stuff that we dream up later. :)
 		//broadcastGameChanges()
-	public String broadcastGameChanges(String charName, String xPos, String yPos)
+	public String broadcastGameChanges(String charName, String xPos, String yPos, String location)
 	{
 		
 		
@@ -941,15 +941,15 @@ public class DatabaseConnector {
 		String sql;
 		ResultSet rs;
 		String ofAllStrings = "";
-		String location = "countryView";
+		//String location = "countryView";
 		
 		try 
 		{	
-			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName +"\' ;";
-			rs = stmt.executeQuery(sql);
-			rs.next();
-			location = rs.getString("location");
-			rs.close();
+//			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName +"\' ;";
+//			rs = stmt.executeQuery(sql);
+//			rs.next();
+//			location = rs.getString("location");
+//			rs.close();
 			
 			//Check to make sure that the account name does not already exist.
 			sql = "SELECT * from CharacterInfoTable where xCoord > \'" + (Integer.parseInt(xPos) - 500) + "\' and location = \'" + location + "\' and xCoord < \'" + (Integer.parseInt(xPos) + 500) + "\' and "
@@ -1047,28 +1047,12 @@ public class DatabaseConnector {
 	}
 	
 	//Test this!!
-	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
+	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String health, String mana, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
 	{
 		String errorCode = "";
 		ResultSet rs;
-		int mana =0;
-		int health =0;
-		if( charClass.equals("Mage"))
-		{
-			mana = Integer.parseInt(charStatInt) * 3 ;
-			health = Integer.parseInt(con);
-		}
-		else if( charClass.equals("Rogue"))
-		{
-			mana = Integer.parseInt(charStatInt) * 2 ;
-			health = Integer.parseInt(con) * 2 ;
-		}
-		else 
-		{
-			mana = Integer.parseInt(charStatInt);
-			health = Integer.parseInt(con) * 3 ;
-		}
-		String sql = "UPDATE CharacterInfoTable set loggedIn = \'" + loggedIn + "\', class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender + "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience + "\', pointsToSpend = \'" + pointsToSpend + "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\', clanName = \'" + clanName + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
+		
+		String sql = "UPDATE CharacterInfoTable set loggedIn = \'" + loggedIn + "\', class = \'" + charClass + "\', level = \'" + level + "\', gender = \'" + gender +  "\', health = \'" + health + "\', mana = \'" + mana + "\', experience = \'" + experience + "\', pointsToSpend = \'" + pointsToSpend + "\', xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\', clanName = \'" + clanName + "\', strength = \'" + str + "\', dexterity = \'" + dex + "\', constitution = \'" + con + "\', intelligence = \'" + charStatInt + "\', willpower = \'" + wil + "\', luck = \'" + luck + "\', abilities = \'" + abilities + "\', cooldown = \'" + cooldown + "\' WHERE characterName = \'" + charName + "\';";
 		
 		System.out.println(sql);
 		try
