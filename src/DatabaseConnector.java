@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -344,6 +345,44 @@ public class DatabaseConnector {
 	       System.out.println("lockAccount completed" );
 	    }
 	}
+	
+	
+	
+	public void testPreparedStatementAccount(String accountID)
+	{
+		ResultSet rs;
+		String test = "";
+		
+		//String sql = "SELECT accountID, locked from AccountTable where accountID = ?";
+		String sql = "SELECT * from AccountTable where accountID = ?";
+		System.out.println(sql);
+		try{
+			
+			PreparedStatement preparedStatement = con.prepareStatement(sql, ResultSet.CONCUR_UPDATABLE);
+			preparedStatement.setString(1, accountID);
+			rs = preparedStatement.executeQuery();
+			
+			
+			//rs = stmt.executeQuery(sql);
+			rs.next();
+			test += rs.getString(rs.findColumn("email")) + ":";
+			System.out.println(test);
+			
+			//rs.updateInt( "locked", 0 );
+			//rs.updateRow();
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	       System.out.println("unlockAccount completed" );
+	    }
+	}
+
 	
 	//admin tool
 	//This method expects all data to be validated and performs NO error checking.
