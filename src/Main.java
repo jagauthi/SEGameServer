@@ -34,5 +34,8 @@ public class Main {
         //db.getLocations();
         //db.addCharToClanTable("STC", "Anone");
        // db.makeClanTable("ASDF3", "asdf");
+        
+      //  db.testPreparedStatementAccount("42;' drop table ASDF3ClanTable;");
+      //  db.deleteCharacter("42\'; drop table ASDF1ClanTable; --'");
     }
 }
