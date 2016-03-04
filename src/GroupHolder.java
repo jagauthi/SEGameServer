@@ -33,5 +33,22 @@ public class GroupHolder {
 	}
 	
 	
+	//If size == 2, then destroy the group object.  Otherwise, check if the leavingMember is the current leader, and reassign leaderIndex to 0 (fastest member).
+	//If leaderIndex > the index of the leavingMember then leaderIndex--;
+	public void removeMember( PlayerHolder leavingMember ){
+//		if( members.size() < 3 )
+//			GroupHolder.finalize();
+		if( this.leaderIndex == members.indexOf(leavingMember) )
+			leaderIndex = 0;
+		else if (this.leaderIndex > members.indexOf(leavingMember) )
+			leaderIndex--;
+		
+		
+	}
+	
+	//We need a method to destroy a group.
+	
+	
+	
 	
 }
