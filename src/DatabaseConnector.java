@@ -11,7 +11,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -20,6 +20,8 @@ public class DatabaseConnector {
 	
 	Connection con;
     Statement stmt;
+    
+    HashMap<String, PlayerHolder> charsOnline = new HashMap<String, PlayerHolder>();
 	
 	public DatabaseConnector()
 	{
@@ -556,21 +558,32 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
-	//This needs to be tested.  
+	//This needs to be changed to use the HashMap.
 	public String getCharInfo(String charName)
 	{
 		String charInfo = "characterInfo:" + charName;  //This will be returned;
 
+		 String xCoord;
+		 String yCoord;
+		 int direction = 2;
+		 String location;
+		 String equippedItems;
+		 String sex;
+		 String level;
+		 String status = "active";
+		 String initiative;
+		
+		
 		String charClass;
 		String sql;
 		ResultSet rs;
 		
 		try 
 		{	
-			//Check to make sure that the account name does not already exist.
+			
 			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
 			rs = stmt.executeQuery(sql);
-			//This method needs to 
+			
 			rs.next();
 	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
 			
@@ -580,24 +593,52 @@ public class DatabaseConnector {
 //			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 //			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
 			charInfo += rs.getString(rs.findColumn("loggedIn")) + ":";
-			charInfo += rs.getString(rs.findColumn("level")) + ":";
-			charInfo += rs.getString(rs.findColumn("gender")) + ":";
+			level = rs.getString(rs.findColumn("level"));
+			charInfo += level + ":";
+			sex = rs.getString(rs.findColumn("gender"));
+			charInfo += sex + ":";
 			charInfo += rs.getString(rs.findColumn("health")) + ":";
 			charInfo += rs.getString(rs.findColumn("mana")) + ":";
 			charInfo += rs.getString(rs.findColumn("experience")) + ":";
 			charInfo += rs.getString(rs.findColumn("pointsToSpend")) + ":";
-			charInfo += rs.getString(rs.findColumn("xCoord")) + ":";
-			charInfo += rs.getString(rs.findColumn("yCoord")) + ":";
-			charInfo += rs.getString(rs.findColumn("location")) + ":";
+			
+			xCoord = rs.getString(rs.findColumn("xCoord"));
+			charInfo += xCoord + ":";
+			
+			yCoord = rs.getString(rs.findColumn("yCoord"));
+			charInfo += yCoord + ":";
+			
+			location = rs.getString(rs.findColumn("location"));
+			charInfo += location + ":";
 			charInfo += rs.getString(rs.findColumn("clanName")) + ":";
 			charInfo += rs.getString(rs.findColumn("strength")) + ":";
-			charInfo += rs.getString(rs.findColumn("dexterity")) + ":";
+			initiative = rs.getString(rs.findColumn("dexterity"));
+			charInfo += initiative + ":";
 			charInfo += rs.getString(rs.findColumn("constitution")) + ":";
 			charInfo += rs.getString(rs.findColumn("intelligence")) + ":";
 			charInfo += rs.getString(rs.findColumn("willpower")) + ":";
 			charInfo += rs.getString(rs.findColumn("luck")) + ":";
 			charInfo += rs.getString(rs.findColumn("abilities")) + ":";
 			charInfo += rs.getString(rs.findColumn("cooldown"));
+		
+			rs.close();
+			//right here!!@
+			sql = "SELECT * from CharacterInventoryTable where characterName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sql);
+			
+			rs.next();
+	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
+			
+			equippedItems = rs.getString(rs.findColumn("equippedItems"));
+			rs.close();
+			
+			PlayerHolder temp = new PlayerHolder(charName, Integer.parseInt(xCoord), Integer.parseInt(yCoord), direction, location, equippedItems, sex, charClass, Integer.parseInt(level), status, Integer.parseInt(initiative) ); 
+	//PlayerHolder(String name, int x, int y, int d, String loc, String equippedItems, String sex, String charClass, int level, String status, int initiative );
+			charsOnline.put(charName, temp);
+			
+			
+			
+			
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -970,6 +1011,8 @@ public class DatabaseConnector {
 	//Send all clients updated positions of other players in their local area, as well as notifications of events.
 		//Events can include zoning, special encounters, and other stuff that we dream up later. :)
 		//broadcastGameChanges()
+	
+	//This needs to be changed to use the HashMap.
 	public String broadcastGameChanges(String charName, String xPos, String yPos, String location)
 	{
 		
@@ -1026,7 +1069,10 @@ public class DatabaseConnector {
 	}
 	
 	
-	public String updateCharPosition(String charName, String xCoord, String yCoord, String location ){
+	//
+	
+	//This needs to be changed to use the HashMap.
+	public String updateCharPositionDB(String charName, String xCoord, String yCoord, String location ){
 		String errorCode = "attemptingCharPosUpdate";
 		ResultSet rs;
 		String sql = "UPDATE CharacterInfoTable set xCoord = \'" + xCoord + "\', yCoord = \'" + yCoord + "\', location = \'" + location + "\' WHERE characterName = \'" + charName + "\';";
@@ -1085,9 +1131,23 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
-	//Test this!!
+	public String updateCharPosition(String charName, String xCoord, String yCoord, String location ){
+		String errorCode = "attemptingCharPosUpdate";
+		charsOnline.get(charName).location = location;
+		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
+		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
+		
+		return errorCode;
+	}
+	
+	
+	
 	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String health, String mana, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
 	{
+		charsOnline.get(charName).location = location;
+		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
+		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
+		
 		String errorCode = "";
 		ResultSet rs;
 		
@@ -1150,6 +1210,9 @@ public class DatabaseConnector {
 	
 	//Test this!!
 	public String updateCharInventory(String charName, String gold, String equippedItems, String[] inventorySlots) {
+		
+		charsOnline.get(charName).equippedItems = equippedItems;
+
 		String errorCode = "";
 		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\',  gold = \'" + gold + "\' ";
 		for(int i = 0; i < 20; i++)
