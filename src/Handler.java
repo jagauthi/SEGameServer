@@ -57,7 +57,7 @@ public class Handler extends Thread {
                     if (input == null) {
                         return;
                     }
-                    String[] tokens = input.split(":");
+                    String[] tokens = input.split("#");
                     String errCode;
                     switch(tokens[0]){
                     case "LOGIN":
@@ -66,7 +66,7 @@ public class Handler extends Thread {
                     	//sends results of loginAttempt... should be "loginSuccess" for correct credentials situation
                     	if( errCode.equals("loginSuccess"))
                     	{
-                    		out.println(errCode + ":" + Main.db.getAccountID(tokens[1]) + ":" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
+                    		out.println(errCode + "#" + Main.db.getAccountID(tokens[1]) + "#" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
                     	}
                     	else
                     	{
@@ -91,7 +91,7 @@ public class Handler extends Thread {
                     	//out.println(errCode );
                     	if( errCode.equals("charCreatedInventorySuccess"))
                     	{
-                    		out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
+                    		out.println(errCode + "#" + tokens[2] + "#" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
                     	}
                     	else
                     	{
@@ -102,12 +102,12 @@ public class Handler extends Thread {
                     	System.out.println("calling db.deleteCharacter() method");
                     	errCode = Main.db.deleteCharacter(tokens[1]);//this needs to be implemented and does not return anything
                     	//out.println(errCode);
-                    	out.println(errCode + ":" + tokens[2] + ":" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
+                    	out.println(errCode + "#" + tokens[2] + "#" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
                     	break;
                     case "UPDATECHARPOS":
                     	System.out.println("calling db.updateCharInfo() method");
                     	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4]);
-                    	//out.println(errCode + ":" + Main.db.broadcastGameChanges(tokens[1], tokens[2],tokens[3], tokens[4]));//sends charname, x, and y position data
+                    	//out.println(errCode + "#" + Main.db.broadcastGameChanges(tokens[1], tokens[2],tokens[3], tokens[4]));//sends charname, x, and y position data
                     	break;
                     case "GETLOCALINFO":
                     	System.out.println("calling db.getSpecificLocationInfo() method");
@@ -141,7 +141,7 @@ public class Handler extends Thread {
                     	//Also need to send this message to the chat box on the server menu...
                         //Main.launch.messageArea.append(line.substring(8) + "\n");
                     	for (PrintWriter writer : writers) {
-                            writer.println(input + ": " + name );
+                            writer.println(input + "#" + name );
                     	   }
                             break;	
 //                    case "TESTLOGOUT":
@@ -160,6 +160,10 @@ public class Handler extends Thread {
                       
                     	break;
                     }
+//                    errCode = Main.db.broadcastGameChanges();
+//                    for (PrintWriter writer : writers) {
+//                        writer.println(errCode);
+//                	   }
                     
                 }
             } 
