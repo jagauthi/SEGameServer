@@ -369,7 +369,7 @@ public class DatabaseConnector {
 			
 			//rs = stmt.executeQuery(sql);
 			rs.next();
-			test += rs.getString(rs.findColumn("email")) + ":";
+			test += rs.getString(rs.findColumn("email")) + "#";
 			System.out.println(test);
 			
 			//rs.updateInt( "locked", 0 );
@@ -464,7 +464,7 @@ public class DatabaseConnector {
 	public String getAccountInfo(String accountID)
 	{
 		String username = ""; 
-		String accountInfo = "securityInfo:" ; //This will be returned.
+		String accountInfo = "securityInfo#" ; //This will be returned.
 		
 		ResultSet rs;
 		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
@@ -473,15 +473,15 @@ public class DatabaseConnector {
 			rs.next();
 			username = rs.getString(rs.findColumn("username"));
 			//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
-			accountInfo += username + ":";
+			accountInfo += username + "#";
 			
-			accountInfo += rs.getString(rs.findColumn("password")) + ":";
-			accountInfo += rs.getString(rs.findColumn("email")) + ":";
-			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + ":";
-			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + ":";
-			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + ":";
-			accountInfo += rs.getString(rs.findColumn("securityAnswer2"))+ ":";
-			accountInfo += rs.getString(rs.findColumn("macAddress"))+ ":";
+			accountInfo += rs.getString(rs.findColumn("password")) + "#";
+			accountInfo += rs.getString(rs.findColumn("email")) + "#";
+			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + "#";
+			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + "#";
+			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + "#";
+			accountInfo += rs.getString(rs.findColumn("securityAnswer2"))+ "#";
+			accountInfo += rs.getString(rs.findColumn("macAddress"))+ "#";
 			accountInfo += rs.getString(rs.findColumn("lastLogInTime"));
 
 		} 
@@ -506,7 +506,7 @@ public class DatabaseConnector {
 	
 	//This is the method that will be called to send info to the character select screen.
 	//This method gets basic char info such as name, class, and level for each char for the account and 
-	//builds a string separating each value for a char with a space.  Each char is separated by a colon (i.e. ":").
+	//builds a string separating each value for a char with a space.  Each char is separated by a colon (i.e. "#").
 	public String getBasicCharsInfo(int accountID)
 	{
 		int numChars = 0;
@@ -525,7 +525,7 @@ public class DatabaseConnector {
 			{
 				if(numChars>0)
 				{
-					ofAllStrings += ":";
+					ofAllStrings += "#";
 				}
 				ofAllStrings += (rs.getString("characterName") + " " + rs.getString("class") + " " + rs.getString("level"));
 				numChars++;
@@ -563,7 +563,7 @@ public class DatabaseConnector {
 	//This needs to be changed to use the HashMap.
 	public String getCharInfo(String charName)
 	{
-		String charInfo = "characterInfo:" + charName;  //This will be returned;
+		String charInfo = "characterInfo#" + charName;  //This will be returned;
 
 		 String xCoord;
 		 String yCoord;
@@ -591,36 +591,36 @@ public class DatabaseConnector {
 			
 			charClass = rs.getString(rs.findColumn("class"));
 			
-			charInfo += ":" + charClass + ":";
+			charInfo += "#" + charClass + "#";
 //			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
 //			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-			charInfo += rs.getString(rs.findColumn("loggedIn")) + ":";
+			charInfo += rs.getString(rs.findColumn("loggedIn")) + "#";
 			level = rs.getString(rs.findColumn("level"));
-			charInfo += level + ":";
+			charInfo += level + "#";
 			sex = rs.getString(rs.findColumn("gender"));
-			charInfo += sex + ":";
-			charInfo += rs.getString(rs.findColumn("health")) + ":";
-			charInfo += rs.getString(rs.findColumn("mana")) + ":";
-			charInfo += rs.getString(rs.findColumn("experience")) + ":";
-			charInfo += rs.getString(rs.findColumn("pointsToSpend")) + ":";
+			charInfo += sex + "#";
+			charInfo += rs.getString(rs.findColumn("health")) + "#";
+			charInfo += rs.getString(rs.findColumn("mana")) + "#";
+			charInfo += rs.getString(rs.findColumn("experience")) + "#";
+			charInfo += rs.getString(rs.findColumn("pointsToSpend")) + "#";
 			
 			xCoord = rs.getString(rs.findColumn("xCoord"));
-			charInfo += xCoord + ":";
+			charInfo += xCoord + "#";
 			
 			yCoord = rs.getString(rs.findColumn("yCoord"));
-			charInfo += yCoord + ":";
+			charInfo += yCoord + "#";
 			
 			location = rs.getString(rs.findColumn("location"));
-			charInfo += location + ":";
-			charInfo += rs.getString(rs.findColumn("clanName")) + ":";
-			charInfo += rs.getString(rs.findColumn("strength")) + ":";
+			charInfo += location + "#";
+			charInfo += rs.getString(rs.findColumn("clanName")) + "#";
+			charInfo += rs.getString(rs.findColumn("strength")) + "#";
 			initiative = rs.getString(rs.findColumn("dexterity"));
-			charInfo += initiative + ":";
-			charInfo += rs.getString(rs.findColumn("constitution")) + ":";
-			charInfo += rs.getString(rs.findColumn("intelligence")) + ":";
-			charInfo += rs.getString(rs.findColumn("willpower")) + ":";
-			charInfo += rs.getString(rs.findColumn("luck")) + ":";
-			charInfo += rs.getString(rs.findColumn("abilities")) + ":";
+			charInfo += initiative + "#";
+			charInfo += rs.getString(rs.findColumn("constitution")) + "#";
+			charInfo += rs.getString(rs.findColumn("intelligence")) + "#";
+			charInfo += rs.getString(rs.findColumn("willpower")) + "#";
+			charInfo += rs.getString(rs.findColumn("luck")) + "#";
+			charInfo += rs.getString(rs.findColumn("abilities")) + "#";
 			charInfo += rs.getString(rs.findColumn("cooldown"));
 		
 			rs.close();
@@ -674,14 +674,14 @@ public class DatabaseConnector {
 			rs.next();
 			
 			equippedItems = rs.getString(rs.findColumn("equippedItems"));
-			charInv = equippedItems + "|";
+			charInv = equippedItems + "#";
 			
 			gold = rs.getString(rs.findColumn("gold"));
-			charInv += gold + "|";
+			charInv += gold + "#";
 			for(int i = 0; i < 20; i++)
 			{
 				String fieldName = "inventorySlot" + (i+1);
-				charInv += "|" + rs.getString(rs.findColumn(fieldName));
+				charInv += "#" + rs.getString(rs.findColumn(fieldName));
 			}	
 		} 
 	    catch (SQLException e) {
@@ -1043,7 +1043,7 @@ public class DatabaseConnector {
 			{
 				if(numChars>0)
 				{
-					ofAllStrings += ":";
+					ofAllStrings += "#";
 				}
 				ofAllStrings += (rs.getString("characterName") + " " + rs.getString("class") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
 				numChars++;
@@ -1070,24 +1070,24 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
-	//This needs to be changed to use the HashMap.
-		public String broadcastGameChanges(String charName)
+	//This needs to be changed to use the HashMap.  This version is omitting the parameter String charName
+		public String broadcastGameChanges()
 		{
 			String errorCode = "charUpdated";
-			int x = charsOnline.get(charName).xCoord;
-			int y = charsOnline.get(charName).yCoord;
-			String location = charsOnline.get(charName).location;
-			String charClass = charsOnline.get(charName).charClass;
-			
-			int numCharsOnline = charsOnline.size();
-			
-			Iterator it = charsOnline.entrySet().iterator();
-			Map.Entry pair;
-			
-			for( PlayerHolder val : charsOnline.values() )
-				if( val.xCoord < x + 500 && val.xCoord > x -500 && location.equals(val.location) && val.yCoord < y + 300 && val.yCoord > y - 300 )
-					errorCode += "|" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
-	
+//			int x = charsOnline.get(charName).xCoord;
+//			int y = charsOnline.get(charName).yCoord;
+//			String location = charsOnline.get(charName).location;
+//			String charClass = charsOnline.get(charName).charClass;
+//			
+//			int numCharsOnline = charsOnline.size();
+//			
+//			Iterator it = charsOnline.entrySet().iterator();
+//			Map.Entry pair;
+//			
+			for( PlayerHolder val : charsOnline.values() ){
+				//if( val.xCoord < x + 500 && val.xCoord > x -500 && location.equals(val.location) && val.yCoord < y + 300 && val.yCoord > y - 300 )
+					errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
+			}
 			return errorCode;
 		}
 		
@@ -1303,7 +1303,7 @@ public class DatabaseConnector {
 	
 	public String getSpecificLocationInfo(String locationName)
 	{
-		String errorCode = "localInfo:";
+		String errorCode = "localInfo#";
 		ResultSet rs;
 		String sql;
 		
@@ -1316,7 +1316,7 @@ public class DatabaseConnector {
 			
 			while( rs.next() )
 			{
-				errorCode += (rs.getString("Name") + ":" + rs.getString("levelRequirement") + ":" + rs.getString("xCoord") + ":" + rs.getString("yCoord") + ":" + rs.getString("imagePath") + ":" + rs.getString("musicPath") + ":" + rs.getString("itemTable") + ":" + rs.getString("npcTable") + ":" + rs.getString("groupRequirements") + ":" + rs.getString("exitBoxX")+ ":" + rs.getString("exitBoxY") + ":" + rs.getString("countryViewExitX") + ":" + rs.getString("countryViewExitY") + ":" + rs.getString("entranceBoxX") + ":" + rs.getString("entranceBoxY")+ ":" + rs.getString("mapPath") + ":" + rs.getString("width")+ ":" + rs.getString("height"));
+				errorCode += (rs.getString("Name") + "#" + rs.getString("levelRequirement") + "#" + rs.getString("xCoord") + "#" + rs.getString("yCoord") + "#" + rs.getString("imagePath") + "#" + rs.getString("musicPath") + "#" + rs.getString("itemTable") + "#" + rs.getString("npcTable") + "#" + rs.getString("groupRequirements") + "#" + rs.getString("exitBoxX")+ "#" + rs.getString("exitBoxY") + "#" + rs.getString("countryViewExitX") + "#" + rs.getString("countryViewExitY") + "#" + rs.getString("entranceBoxX") + "#" + rs.getString("entranceBoxY")+ "#" + rs.getString("mapPath") + "#" + rs.getString("width")+ "#" + rs.getString("height"));
 				numLocations++;
 			}
 		} 
@@ -1337,7 +1337,7 @@ public class DatabaseConnector {
 	
 	public String getLocations()
 	{
-		String errorCode = "loadLocations:";
+		String errorCode = "loadLocations#";
 		ResultSet rs;
 		String sql;
 		
@@ -1352,7 +1352,7 @@ public class DatabaseConnector {
 			{
 				if(numLocations>0)
 				{
-					errorCode += ":";
+					errorCode += "#";
 				}
 				errorCode += (rs.getString("Name") + " " + rs.getString("xCoord") + " " + rs.getString("yCoord"));
 				numLocations++;
@@ -1459,7 +1459,7 @@ public class DatabaseConnector {
 	
 	public String addLocation(String name, String xCoord, String yCoord)
 	{
-		String errorCode = "addLocation:";
+		String errorCode = "addLocation#";
 		ResultSet rs;
 		String sql;
 //		
