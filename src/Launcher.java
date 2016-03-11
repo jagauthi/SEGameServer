@@ -489,7 +489,7 @@ public class Launcher implements ActionListener{
 			
 		}else if(arg0.getActionCommand() == SEND){
 			//just an exsample definatly need to be replaced
-			messageDisplayArea.setText(messageDisplayArea.getText()+"\n"+messageInputText.getText());
+			messageDisplayArea.setText(messageDisplayArea.getText()+"\n"+ "Admin: " + messageInputText.getText());
 			messageInputText.setText("");
 		}
 		else if(arg0.getActionCommand() == ACCUSERNAME)
