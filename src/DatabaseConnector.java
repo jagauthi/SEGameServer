@@ -12,6 +12,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -1012,8 +1014,8 @@ public class DatabaseConnector {
 		//Events can include zoning, special encounters, and other stuff that we dream up later. :)
 		//broadcastGameChanges()
 	
-	//This needs to be changed to use the HashMap.
-	public String broadcastGameChanges(String charName, String xPos, String yPos, String location)
+	//This is the version that uses the database and is not currently being used.
+	public String broadcastGameChangesDB(String charName, String xPos, String yPos, String location)
 	{
 		
 		
@@ -1068,7 +1070,27 @@ public class DatabaseConnector {
 		return ofAllStrings;
 	}
 	
+	//This needs to be changed to use the HashMap.
+		public String broadcastGameChanges(String charName)
+		{
+			String errorCode = "charUpdated";
+			int x = charsOnline.get(charName).xCoord;
+			int y = charsOnline.get(charName).yCoord;
+			String location = charsOnline.get(charName).location;
+			String charClass = charsOnline.get(charName).charClass;
+			
+			int numCharsOnline = charsOnline.size();
+			
+			Iterator it = charsOnline.entrySet().iterator();
+			Map.Entry pair;
+			
+			for( PlayerHolder val : charsOnline.values() )
+				if( val.xCoord < x + 500 && val.xCoord > x -500 && location.equals(val.location) && val.yCoord < y + 300 && val.yCoord > y - 300 )
+					errorCode += "|" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
 	
+			return errorCode;
+		}
+		
 	//
 	
 	//This needs to be changed to use the HashMap.
