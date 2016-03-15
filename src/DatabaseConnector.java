@@ -1373,6 +1373,43 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
+	public String getEnemies()
+	{
+		String errorCode = "encounterInfo#";
+		ResultSet rs;
+		String sql;
+		
+		int numEnemies = 0;
+		try 
+		{	
+			sql = "SELECT * from EnemyTable;";
+			rs = stmt.executeQuery(sql);
+			
+			while( rs.next() )
+			{
+				if(numEnemies>0)
+				{
+					errorCode += "#";
+				}
+				errorCode += (rs.getString("Name") + " " + rs.getString("health") + " " + rs.getString("damage"));
+				numEnemies++;
+			}
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	    	System.out.println(errorCode);
+	    	System.out.println("Loaded encounter successfully.");
+	    }
+		
+		return errorCode;
+	}
+	
 //	//PersonID int,
 //	LastName varchar(255),
 //	FirstName varchar(255),
