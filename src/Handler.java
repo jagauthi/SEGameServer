@@ -133,7 +133,11 @@ public class Handler extends Thread {
                     	System.out.println("Calling db.getLocations() method");
                     	errCode = Main.db.getLocations();
                     	out.println(errCode);
-                 
+                    	break;
+                    case "GETCOMBATINFO":
+                    	System.out.println("Calling db.getEnemies() method");
+                    	errCode = Main.db.getEnemies();
+                    	out.println(errCode);
                     	break;
                     case "MESSAGE":	
                     	//This was moved from the default case due to issues with multiple people logging in...
