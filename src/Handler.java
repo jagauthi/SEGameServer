@@ -107,6 +107,11 @@ public class Handler extends Thread {
                     case "UPDATECHARPOS":
                     	System.out.println("calling db.updateCharInfo() method");
                     	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4]);
+                    	errCode = Main.db.broadcastGameChanges();
+                    	System.out.println(errCode);
+                    	for (PrintWriter writer : writers) {
+                            writer.println( errCode );
+                    	   }
                     	//out.println(errCode + "#" + Main.db.broadcastGameChanges(tokens[1], tokens[2],tokens[3], tokens[4]));//sends charname, x, and y position data
                     	break;
                     case "GETLOCALINFO":
