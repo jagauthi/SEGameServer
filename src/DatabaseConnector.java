@@ -24,11 +24,12 @@ public class DatabaseConnector {
     Statement stmt;
     
     HashMap<String, PlayerHolder> charsOnline = new HashMap<String, PlayerHolder>();
+    long lastTime;
 	
 	public DatabaseConnector()
 	{
 		//System.out.println(connectToDatabase());
-		
+		lastTime = System.currentTimeMillis();
 		try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 	      }
@@ -1083,10 +1084,20 @@ public class DatabaseConnector {
 //			
 //			Iterator it = charsOnline.entrySet().iterator();
 //			Map.Entry pair;
-//			
+////			
+//			synchronized (names) {
+//                if (!names.contains(name)) {
+//                	names.add(name);
+//                    break;
+//                }
+//            }
+			
+			synchronized (charsOnline){
 			for( PlayerHolder val : charsOnline.values() ){
 				//if( val.xCoord < x + 500 && val.xCoord > x -500 && location.equals(val.location) && val.yCoord < y + 300 && val.yCoord > y - 300 )
 					errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
+					
+			}
 			}
 			return errorCode;
 		}
@@ -1154,11 +1165,29 @@ public class DatabaseConnector {
 	}
 	
 	public String updateCharPosition(String charName, String xCoord, String yCoord, String location ){
+		
+		
+		//errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
+		
+		long currentTime = System.currentTimeMillis();
+		System.out.println("current time = " + currentTime);
+		System.out.println("last time = " + lastTime);
+		long difference = currentTime - lastTime;
+		System.out.println("difference = " + difference);
+		if( difference > 3000){
+			System.out.println("difference = " + difference);
+			for( PlayerHolder val : charsOnline.values() ){	
+				updateCharPositionDB(val.charName, Integer.toString(val.xCoord), Integer.toString(val.yCoord), val.location );
+			}
+			lastTime = System.currentTimeMillis();
+		}
+		
+		
 		String errorCode = "attemptingCharPosUpdate";
 		charsOnline.get(charName).location = location;
 		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
 		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
-		
+		System.out.println("Char name : " + charName + " in location " + location);
 		return errorCode;
 	}
 	
