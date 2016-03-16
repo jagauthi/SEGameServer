@@ -451,7 +451,7 @@ public class Launcher implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand() == USERSEARCH){
 			String accountInfo = Main.db.getAccountInfo( Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) ) );
-			String[] tokens = accountInfo.split(":");
+			String[] tokens = accountInfo.split("#");
 			
 			accountUserName.setText(tokens[1]);
 			accountPassword.setText(tokens[2]);
