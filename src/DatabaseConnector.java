@@ -791,7 +791,7 @@ public class DatabaseConnector {
 		
 		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
 				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '0', '0', \'" 
+				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '16', '9', \'" 
 				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
