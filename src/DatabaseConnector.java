@@ -889,7 +889,7 @@ public class DatabaseConnector {
 //			WHERE some_column=some_value;
 //			
 			
-			sql = "UPDATE AccountTable set password = \'" + password + "\', email = \'" + email + "\', securityQuestion1 = \'" + securityQuestion1 + "\', securityAnswer1 = \'" + securityAnswer1 + "\', securityQuestion2 = \'" + securityQuestion2 + "\', securityAnswer2 = \'" + securityAnswer2 + "\' WHERE username = \'" + username + "\';";
+			sql = "UPDATE AccountTable set password = \'" + password + "\', email = \'" + email + "\', numFailedAttempts = \'" + "0" +  "\', securityQuestion1 = \'" + securityQuestion1 + "\', securityAnswer1 = \'" + securityAnswer1 + "\', securityQuestion2 = \'" + securityQuestion2 + "\', securityAnswer2 = \'" + securityAnswer2 + "\' WHERE username = \'" + username + "\';";
 			System.out.println(sql);
 			//System.exit(0);
 			int insertResult = stmt.executeUpdate(sql);
