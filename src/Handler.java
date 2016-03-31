@@ -150,7 +150,7 @@ public class Handler extends Thread {
                     	//Also need to send this message to the chat box on the server menu...
                         //Main.launch.messageArea.append(line.substring(8) + "\n");
                     	for (PrintWriter writer : writers) {
-                            writer.println(input + "#" + name );
+                            writer.println(input);
                     	   }
                             break;	
 //                    case "TESTLOGOUT":
