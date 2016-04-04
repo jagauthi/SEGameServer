@@ -66,7 +66,7 @@ public class Handler extends Thread {
                     	//sends results of loginAttempt... should be "loginSuccess" for correct credentials situation
                     	if( errCode.equals("loginSuccess"))
                     	{
-                    		out.println(errCode + "#" + Main.db.getAccountID(tokens[1]) + "#" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])));
+                    		out.println(errCode + "#" + Main.db.getAccountID(tokens[1]) + "#" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])) );
                     	}
                     	else
                     	{
@@ -85,6 +85,7 @@ public class Handler extends Thread {
                     	for(int i = 1; i < 8; i++)
                     		System.out.println(tokens[i]);
                     	errCode = Main.db.updateAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
+                    	errCode += "#"  + Main.db.getAccountID(tokens[1]) + "#" + Main.db.getBasicCharsInfo(Main.db.getAccountID(tokens[1])) ;
                     	out.println(errCode);
                     	break;
                     case "CREATECHAR":
@@ -117,7 +118,7 @@ public class Handler extends Thread {
                     	out.println(errCode + "#" + tokens[2] + "#" + Main.db.getBasicCharsInfo(Integer.parseInt(tokens[2])));
                     	break;
                     case "UPDATECHARPOS":
-                    	System.out.println("calling db.updateCharInfo() method");
+                    	System.out.println("calling db.updateCharPOS() method");
                     	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4]);
                     	errCode = Main.db.broadcastGameChanges();
                     	System.out.println(errCode);
@@ -125,6 +126,11 @@ public class Handler extends Thread {
                             writer.println( errCode );
                     	   }
                     	//out.println(errCode + "#" + Main.db.broadcastGameChanges(tokens[1], tokens[2],tokens[3], tokens[4]));//sends charname, x, and y position data
+                    	break;
+                    case "UPDATECHARINFO":
+                    	System.out.println("calling db.updateCharInfo() method");
+                    	errCode = Main.db.updateCharInfo(tokens[1], tokens[2],tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9], tokens[10], tokens[11], tokens[12], tokens[13], tokens[14], tokens[15], tokens[16], tokens[17], tokens[18], tokens[19], tokens[20], tokens[21]);
+                    	out.println(errCode);
                     	break;
                     case "GETLOCALINFO":
                     	System.out.println("calling db.getSpecificLocationInfo() method");
@@ -160,7 +166,7 @@ public class Handler extends Thread {
                     	//This was moved from the default case due to issues with multiple people logging in...
                     	System.out.println("message case");
                     	//Also need to send this message to the chat box on the server menu...
-                        //Main.launch.messageArea.append(line.substring(8) + "\n");
+                        //Main.launch.messageDisplayArea.append(line.substring(8) + "\n");
                     	for (PrintWriter writer : writers) {
                             writer.println(input);
                     	   }
