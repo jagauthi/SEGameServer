@@ -587,59 +587,61 @@ public class DatabaseConnector {
 			
 			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
 			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				
+				// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
+				
+				charClass = rs.getString(rs.findColumn("class"));
+				
+				charInfo += "#" + charClass + "#";
+				//sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+				//			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+				charInfo += rs.getString(rs.findColumn("loggedIn")) + "#";
+				level = rs.getString(rs.findColumn("level"));
+				charInfo += level + "#";
+				sex = rs.getString(rs.findColumn("gender"));
+				charInfo += sex + "#";
+				charInfo += rs.getString(rs.findColumn("health")) + "#";
+				charInfo += rs.getString(rs.findColumn("mana")) + "#";
+				charInfo += rs.getString(rs.findColumn("experience")) + "#";
+				charInfo += rs.getString(rs.findColumn("pointsToSpend")) + "#";
+				
+				xCoord = rs.getString(rs.findColumn("xCoord"));
+				charInfo += xCoord + "#";
+				
+				yCoord = rs.getString(rs.findColumn("yCoord"));
+				charInfo += yCoord + "#";
+				
+				location = rs.getString(rs.findColumn("location"));
+				charInfo += location + "#";
+				charInfo += rs.getString(rs.findColumn("clanName")) + "#";
+				charInfo += rs.getString(rs.findColumn("strength")) + "#";
+				initiative = rs.getString(rs.findColumn("dexterity"));
+				charInfo += initiative + "#";
+				charInfo += rs.getString(rs.findColumn("constitution")) + "#";
+				charInfo += rs.getString(rs.findColumn("intelligence")) + "#";
+				charInfo += rs.getString(rs.findColumn("willpower")) + "#";
+				charInfo += rs.getString(rs.findColumn("luck")) + "#";
+				charInfo += rs.getString(rs.findColumn("abilities")) + "#";
+				charInfo += rs.getString(rs.findColumn("cooldown"));
 			
-			rs.next();
-	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
-			
-			charClass = rs.getString(rs.findColumn("class"));
-			
-			charInfo += "#" + charClass + "#";
-//			sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
-//			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-			charInfo += rs.getString(rs.findColumn("loggedIn")) + "#";
-			level = rs.getString(rs.findColumn("level"));
-			charInfo += level + "#";
-			sex = rs.getString(rs.findColumn("gender"));
-			charInfo += sex + "#";
-			charInfo += rs.getString(rs.findColumn("health")) + "#";
-			charInfo += rs.getString(rs.findColumn("mana")) + "#";
-			charInfo += rs.getString(rs.findColumn("experience")) + "#";
-			charInfo += rs.getString(rs.findColumn("pointsToSpend")) + "#";
-			
-			xCoord = rs.getString(rs.findColumn("xCoord"));
-			charInfo += xCoord + "#";
-			
-			yCoord = rs.getString(rs.findColumn("yCoord"));
-			charInfo += yCoord + "#";
-			
-			location = rs.getString(rs.findColumn("location"));
-			charInfo += location + "#";
-			charInfo += rs.getString(rs.findColumn("clanName")) + "#";
-			charInfo += rs.getString(rs.findColumn("strength")) + "#";
-			initiative = rs.getString(rs.findColumn("dexterity"));
-			charInfo += initiative + "#";
-			charInfo += rs.getString(rs.findColumn("constitution")) + "#";
-			charInfo += rs.getString(rs.findColumn("intelligence")) + "#";
-			charInfo += rs.getString(rs.findColumn("willpower")) + "#";
-			charInfo += rs.getString(rs.findColumn("luck")) + "#";
-			charInfo += rs.getString(rs.findColumn("abilities")) + "#";
-			charInfo += rs.getString(rs.findColumn("cooldown"));
-		
-			rs.close();
-			//right here!!@
-			sql = "SELECT * from CharacterInventoryTable where characterName = \'" + charName + "\';";
-			rs = stmt.executeQuery(sql);
-			
-			rs.next();
-	// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
-			
-			equippedItems = rs.getString(rs.findColumn("equippedItems"));
-			rs.close();
-			
-			PlayerHolder temp = new PlayerHolder(charName, Integer.parseInt(xCoord), Integer.parseInt(yCoord), direction, location, equippedItems, sex, charClass, Integer.parseInt(level), status, Integer.parseInt(initiative) ); 
-	//PlayerHolder(String name, int x, int y, int d, String loc, String equippedItems, String sex, String charClass, int level, String status, int initiative );
-			charsOnline.put(charName, temp);
-			
+				rs.close();
+				//right here!!@
+				sql = "SELECT * from CharacterInventoryTable where characterName = \'" + charName + "\';";
+				rs = stmt.executeQuery(sql);
+				
+				rs.next();
+				// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
+				
+				equippedItems = rs.getString(rs.findColumn("equippedItems"));
+				rs.close();
+				
+				PlayerHolder temp = new PlayerHolder(charName, Integer.parseInt(xCoord), Integer.parseInt(yCoord), direction, location, equippedItems, sex, charClass, Integer.parseInt(level), status, Integer.parseInt(initiative) ); 
+				//PlayerHolder(String name, int x, int y, int d, String loc, String equippedItems, String sex, String charClass, int level, String status, int initiative );
+				charsOnline.put(charName, temp);
+			}
+			else
+				charInfo = "charNotFound";
 			
 			
 			
