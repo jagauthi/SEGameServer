@@ -399,6 +399,7 @@ public class DatabaseConnector {
 				rs = stmt.executeQuery(sql);
 				rs.next();
 				rs.updateInt( "locked", 0 );
+				rs.updateInt("numFailedAttempts", 0 );
 				rs.updateRow();
 			} 
 		    catch (SQLException e) {
@@ -883,6 +884,10 @@ public class DatabaseConnector {
 				rs.close();
 				return errorCode;
 			}
+			rs.updateInt( "locked", 0 );
+			rs.updateInt("numFailedAttempts", 0 );
+			rs.updateRow();
+		
 //			
 //			UPDATE table_name
 //			SET column1=value1,column2=value2,...
