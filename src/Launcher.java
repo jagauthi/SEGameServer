@@ -88,6 +88,7 @@ public class Launcher implements ActionListener{
     JButton accountSecAnswer1Button;
     JButton accountSecAnswer2Button;
     
+    JTextArea charText;
 	
 	
 	Font normalFont = new Font("Arial", Font.BOLD, 30);
@@ -390,7 +391,7 @@ public class Launcher implements ActionListener{
         JTextArea networkMonitorText = new JTextArea(30,30);
         JScrollPane networkScroll = new JScrollPane(networkMonitorText);
         
-        JTextArea charText = new JTextArea(30,30);
+        charText = new JTextArea(30,30);
         JScrollPane charScroll = new JScrollPane(charText);
         
         JTextArea userText = new JTextArea(30,30);
@@ -438,7 +439,7 @@ public class Launcher implements ActionListener{
         c.gridy=2;
         c.gridwidth = 2;
         mainPanel.add(consolePanel, c);
-        accountUserName.setText("TEst");
+        accountUserName.setText("");
         return mainPanel;
         
 	}
@@ -463,27 +464,18 @@ public class Launcher implements ActionListener{
 			accountMacAddress.setText(tokens[8]);
 	        accountLastLoginTime.setText(tokens[9]);
 			
-			
-//			accountUserName = new JTextField(30);
 
-//	        accountEmail = new JTextField(30);
-//	        accountEmail.setEnabled(false);
-//	        accountPassword = new JTextField(30);
-//	        accountPassword.setEnabled(false);
-//	        accountSecQuestion1 = new JTextField(30);
-//	        accountSecQuestion1.setEnabled(false);
-//	        accountSecQuestion2 = new JTextField(30);
-//	        accountSecQuestion2.setEnabled(false);
-//	        accountSecAnswer1 = new JTextField(30);
-//	        accountSecAnswer1.setEnabled(false);
-//	        accountSecAnswer2 = new JTextField(30);
-//	        accountSecAnswer2.setEnabled(false);
-//	        accountMacAddress = new JTextField(30);
-//	        accountMacAddress.setEnabled(false);
-//	        accountLastLoginTime = new JTextField(30);
-//	        accountLastLoginTime.setEnabled(false);
 			
 		} else if(arg0.getActionCommand() == CHARSEARCH){
+			String charInfo = Main.db.getCharInfo(  characterNameSearchText.getText() );
+			String[] tokens = charInfo.split("#");
+			String[] values = {"Search Results", "Name","Class","loggedIn","level", "gender", "health", "mana", "experience", "pointsToSpend", "xCoord", "yCoord", "location", "clanName", "strength", "dexterity", "constitution", "intelligence", "willpower", "luck", "abilities", "cooldown"};
+			charText.setText("Character Info\n\n");
+			
+			
+			for( int i = 0; i < tokens.length; i++){
+				charText.append(values[i] + " : " + tokens[i] + "\n");
+			}
 			
 		}else if(arg0.getActionCommand() == NETWORK){
 			
