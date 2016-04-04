@@ -82,6 +82,8 @@ public class Handler extends Thread {
                     	break;
                     case "UPDATEACCOUNT":
                     	System.out.println("calling db.updateAccount() method");
+                    	for(int i = 1; i < 8; i++)
+                    		System.out.println(tokens[i]);
                     	errCode = Main.db.updateAccount(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7] );
                     	out.println(errCode);
                     	break;
@@ -97,6 +99,16 @@ public class Handler extends Thread {
                     	{
                     		 out.println(errCode);	
                     	}
+                    	break;
+                    case "FORGOTPASSWORD":
+                    	System.out.println("calling db.getAccountInfo() method");
+                    	int accID = Main.db.getAccountID(tokens[1]);
+                    	System.out.println(accID);
+                    	if(accID == -1)
+                    		errCode = "usernameNotFound";
+                    	else
+                    		errCode = Main.db.getAccountInfo(Integer.toString(accID));
+                    	out.println(errCode);
                     	break;
                     case "DELETECHAR":
                     	System.out.println("calling db.deleteCharacter() method");
