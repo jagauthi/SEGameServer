@@ -25,12 +25,26 @@ public class Handler extends Thread {
             this.socket = socket;
         }
          
+        public void registerName(String name){
+        
+        
+        }
+        
+        
+        
+        public static void broadcastMessage(String message){
+        	for (PrintWriter writer : writers) {
+                writer.println(message);
+        	   }
+        }
+        
         public void run() {
             try {
                 // Create character streams for the socket.
                 in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
+                
                 
                 while (true) {
                     out.println("SUBMITNAME");
@@ -166,7 +180,15 @@ public class Handler extends Thread {
                     	//This was moved from the default case due to issues with multiple people logging in...
                     	System.out.println("message case");
                     	//Also need to send this message to the chat box on the server menu...
-                        //Main.launch.messageDisplayArea.append(line.substring(8) + "\n");
+                    	String messageString = input.substring(8);
+                    	messageString = messageString.replaceFirst( "#" , ": " );
+                   
+       //             	for(int i = 2; i < tokens.length; i++)
+         //           		messageString += tokens[i] + "#";
+           //         	if(input.toCharArray()[input.length()-1] == '#')
+             //       		messageString+="#";
+                       // Main.launch.messageDisplayArea.append(tokens[1] + " : " + messageString.substring(0, messageString.length()-1) + "\n");
+                    	Main.launch.messageDisplayArea.append(messageString + "\n");
                     	for (PrintWriter writer : writers) {
                             writer.println(input);
                     	   }
