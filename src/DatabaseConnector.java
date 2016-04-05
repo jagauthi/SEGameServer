@@ -20,7 +20,7 @@ import java.util.Calendar;
 
 public class DatabaseConnector {
 	
-	Connection con;
+    Connection con;
     Statement stmt;
     
     HashMap<String, PlayerHolder> charsOnline = new HashMap<String, PlayerHolder>();
