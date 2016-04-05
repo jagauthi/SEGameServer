@@ -304,8 +304,10 @@ public class DatabaseConnector {
 		String sql = "SELECT * from AccountTable where Username = \'" + username + "\';";
 		try{
 			rs = stmt.executeQuery(sql);
-			rs.next();
-			accountID = rs.getInt("accountID");
+			if(rs.next())
+				accountID = rs.getInt("accountID");
+			else
+				accountID = -1;
 			
 		} 
 	    catch (SQLException e) {
@@ -462,7 +464,45 @@ public class DatabaseConnector {
 		    }
 		}
 
-//test this!!!
+		
+		public String getAccountStatus(String accountID)
+		{
+			 
+			String accountStatus = "" ; //This will be returned.
+			String locked;
+			
+			
+			ResultSet rs;
+			String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
+			try{
+				rs = stmt.executeQuery(sql);
+				rs.next();
+				locked = rs.getString(rs.findColumn("locked"));
+				//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
+				accountStatus += locked + "#";
+				
+				accountStatus += rs.getString(rs.findColumn("banned"));
+				
+			} 
+		    catch (SQLException e) {
+		       e.printStackTrace();
+		    }
+		    catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		    finally
+		    {  
+		       System.out.println("getAccountStatus completed and it is :" + accountStatus);
+		    }
+			
+			if( accountID.equals("") )
+			{
+				System.out.println("Unable to retrieve accountStatus...");
+			}
+			return accountStatus;
+		}
+		
+
 	public String getAccountInfo(String accountID)
 	{
 		String username = ""; 
@@ -472,20 +512,21 @@ public class DatabaseConnector {
 		String sql = "SELECT * from AccountTable where accountID = \'" + accountID + "\';";
 		try{
 			rs = stmt.executeQuery(sql);
-			rs.next();
-			username = rs.getString(rs.findColumn("username"));
-			//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
-			accountInfo += username + "#";
-			
-			accountInfo += rs.getString(rs.findColumn("password")) + "#";
-			accountInfo += rs.getString(rs.findColumn("email")) + "#";
-			accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + "#";
-			accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + "#";
-			accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + "#";
-			accountInfo += rs.getString(rs.findColumn("securityAnswer2"))+ "#";
-			accountInfo += rs.getString(rs.findColumn("macAddress"))+ "#";
-			accountInfo += rs.getString(rs.findColumn("lastLogInTime"));
-
+			if( rs.next()){
+				username = rs.getString(rs.findColumn("username"));
+				//String username, String password, String email, String securityQuestion1, String securityAnswer1, String securityQuestion2, String securityAnswer2
+				accountInfo += username + "#";
+				
+				accountInfo += rs.getString(rs.findColumn("password")) + "#";
+				accountInfo += rs.getString(rs.findColumn("email")) + "#";
+				accountInfo += rs.getString(rs.findColumn("securityQuestion1")) + "#";
+				accountInfo += rs.getString(rs.findColumn("securityAnswer1")) + "#";
+				accountInfo += rs.getString(rs.findColumn("securityQuestion2")) + "#";
+				accountInfo += rs.getString(rs.findColumn("securityAnswer2"))+ "#";
+				accountInfo += rs.getString(rs.findColumn("macAddress"))+ "#";
+				accountInfo += rs.getString(rs.findColumn("lastLogInTime"));
+			}
+			else accountInfo += "Account Name Not Found";
 		} 
 	    catch (SQLException e) {
 	       e.printStackTrace();
@@ -561,6 +602,91 @@ public class DatabaseConnector {
 		//end of pasted code...
 		return ofAllStrings;
 	}
+	
+	public String charSearch(String charName)
+	{
+		String charInfo = "characterInfo#" + charName;  //This will be returned;
+
+		 String xCoord;
+		 String yCoord;
+		 int direction = 2;
+		 String location;
+		 String equippedItems;
+		 String sex;
+		 String level;
+		 String status = "active";
+		 String initiative;
+		
+		
+		String charClass;
+		String sql;
+		ResultSet rs;
+		
+		try 
+		{	
+			
+			sql = "SELECT * from CharacterInfoTable where characterName = \'" + charName + "\';";
+			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				
+				// String charClass, String level, String gender, String str, String dex, String con, String charStatInt, String wil, String luck,  String experience, String xCoord, String yCoord, String gold, String abilities, String cooldown
+				
+				charClass = rs.getString(rs.findColumn("class"));
+				
+				charInfo += "#" + charClass + "#";
+				//sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, gold, equippedItems,"
+				//			+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
+				charInfo += rs.getString(rs.findColumn("loggedIn")) + "#";
+				level = rs.getString(rs.findColumn("level"));
+				charInfo += level + "#";
+				sex = rs.getString(rs.findColumn("gender"));
+				charInfo += sex + "#";
+				charInfo += rs.getString(rs.findColumn("health")) + "#";
+				charInfo += rs.getString(rs.findColumn("mana")) + "#";
+				charInfo += rs.getString(rs.findColumn("experience")) + "#";
+				charInfo += rs.getString(rs.findColumn("pointsToSpend")) + "#";
+				
+				xCoord = rs.getString(rs.findColumn("xCoord"));
+				charInfo += xCoord + "#";
+				
+				yCoord = rs.getString(rs.findColumn("yCoord"));
+				charInfo += yCoord + "#";
+				
+				location = rs.getString(rs.findColumn("location"));
+				charInfo += location + "#";
+				charInfo += rs.getString(rs.findColumn("clanName")) + "#";
+				charInfo += rs.getString(rs.findColumn("strength")) + "#";
+				initiative = rs.getString(rs.findColumn("dexterity"));
+				charInfo += initiative + "#";
+				charInfo += rs.getString(rs.findColumn("constitution")) + "#";
+				charInfo += rs.getString(rs.findColumn("intelligence")) + "#";
+				charInfo += rs.getString(rs.findColumn("willpower")) + "#";
+				charInfo += rs.getString(rs.findColumn("luck")) + "#";
+				charInfo += rs.getString(rs.findColumn("abilities")) + "#";
+				charInfo += rs.getString(rs.findColumn("cooldown"));
+			
+				rs.close();
+				
+			}
+			else
+				charInfo = "charNotFound";
+			
+			
+			
+		} 
+	    catch (SQLException e) {
+	       e.printStackTrace();
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    finally
+	    {  
+	      // System.out.println("get character info attempt completed");
+	    }
+		return charInfo;
+	}
+	
 	
 	//This needs to be changed to use the HashMap.
 	public String getCharInfo(String charName)
@@ -654,7 +780,7 @@ public class DatabaseConnector {
 	    }
 	    finally
 	    {  
-	       System.out.println("create character attempt completed");
+	      // System.out.println("get character info attempt completed");
 	    }
 		return charInfo;
 	}
