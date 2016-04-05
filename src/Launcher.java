@@ -51,6 +51,8 @@ public class Launcher implements ActionListener{
 	final static String SECQUEST2 = "SECQUES2";
 	final static String SECANS1 = "SECANS1";
 	final static String SECANS2 = "SECANS2";
+	final static String ACCLOCK = "ACCLOCK";
+	final static String ACCBAN = "ACCBAN";
 	
 	//Console Panel
 	JPanel consolePanel;
@@ -80,6 +82,8 @@ public class Launcher implements ActionListener{
     JTextField accountSecAnswer2;
     JTextField accountMacAddress;
     JTextField accountLastLoginTime;
+    JTextField accountLocked;
+    JTextField accountBanned;
     JButton accountUserNameButton;
     JButton accountEmailButton;
     JButton accountPasswordButton;
@@ -87,8 +91,13 @@ public class Launcher implements ActionListener{
     JButton accountSecQuestion2Button;
     JButton accountSecAnswer1Button;
     JButton accountSecAnswer2Button;
+    JButton accountLockedButton;
+    JButton accountBannedButton;
     
     JTextArea charText;
+    JTabbedPane rightPanel;
+    
+    JTextArea networkMonitorText;
 	
 	
 	Font normalFont = new Font("Arial", Font.BOLD, 30);
@@ -251,6 +260,11 @@ public class Launcher implements ActionListener{
         accountMacAddress.setEnabled(false);
         accountLastLoginTime = new JTextField(30);
         accountLastLoginTime.setEnabled(false);
+        accountLocked = new JTextField(30);
+        accountLocked.setEnabled(false);
+        accountBanned = new JTextField(30);
+        accountBanned.setEnabled(false);
+        
         
         JLabel userName = new JLabel("User Name: ");
         userName.setHorizontalAlignment(JLabel.RIGHT);
@@ -274,7 +288,12 @@ public class Launcher implements ActionListener{
         macAdress.setHorizontalAlignment(JLabel.RIGHT);
         JLabel lastLogin = new JLabel("Last Login Time: ");
         lastLogin.setHorizontalAlignment(JLabel.RIGHT);
-    	
+        JLabel lockedStatus = new JLabel("Locked: ");
+        lockedStatus.setHorizontalAlignment(JLabel.RIGHT);
+        JLabel bannedStatus = new JLabel("Banned: ");
+        bannedStatus.setHorizontalAlignment(JLabel.RIGHT);
+        
+        
         accountUserNameButton = new JButton("Change");
         accountUserNameButton.setActionCommand(ACCUSERNAME);
         accountUserNameButton.addActionListener(this);
@@ -302,6 +321,14 @@ public class Launcher implements ActionListener{
         accountSecAnswer2Button = new JButton("Change");
         accountSecAnswer2Button.setActionCommand(SECANS2);
         accountSecAnswer2Button.addActionListener(this);
+        
+        accountLockedButton = new JButton("Change");
+        accountLockedButton.setActionCommand(ACCLOCK);
+        accountLockedButton.addActionListener(this);
+        
+        accountBannedButton = new JButton("Change");
+        accountBannedButton.setActionCommand(ACCBAN);
+        accountBannedButton.addActionListener(this);
         
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.BOTH;
@@ -363,6 +390,7 @@ public class Launcher implements ActionListener{
         accountPanel.add(accountSecQuestion2, c);
         c.gridx = 2;
         accountPanel.add(accountSecQuestion2Button, c);
+        
         c.gridy = 8;
         c.gridx = 0;
         accountPanel.add(answer2, c);
@@ -371,24 +399,42 @@ public class Launcher implements ActionListener{
         c.gridx = 2;
         accountPanel.add(accountSecAnswer2Button, c);
         
-        c.gridx = 0; c.gridy = 9;
+        c.gridy = 9;
+        c.gridx = 0;
+        accountPanel.add(lockedStatus, c);
+        c.gridx = 1;
+        accountPanel.add(accountLocked, c);
+        c.gridx = 2;
+        accountPanel.add(accountLockedButton, c);
+        
+        c.gridy = 10;
+        c.gridx = 0;
+        accountPanel.add(bannedStatus, c);
+        c.gridx = 1;
+        accountPanel.add(accountBanned, c);
+        c.gridx = 2;
+        accountPanel.add(accountBannedButton, c);
+        
+        c.gridx = 0; c.gridy = 11;
         accountPanel.add(macAdress, c);
         c.gridx = 1; c.gridwidth =2;
         accountPanel.add(accountMacAddress, c);
         
         c.gridwidth = 1;
-        c.gridx = 0; c.gridy = 10;
+        c.gridx = 0; c.gridy = 12;
         accountPanel.add(lastLogin, c);
         c.gridx = 1; c.gridwidth =2;
         accountPanel.add(accountLastLoginTime, c);
         
+       
+        
         c.insets = new Insets(0, 0, 0, 0);
         
       //Build Right Panel
-        JTabbedPane rightPanel = new JTabbedPane();
+        rightPanel = new JTabbedPane();
         rightPanel.setMinimumSize(new Dimension(WIDTH/2-25, 2*HEIGHT/3-25));
         
-        JTextArea networkMonitorText = new JTextArea(30,30);
+        networkMonitorText = new JTextArea(30,30);
         JScrollPane networkScroll = new JScrollPane(networkMonitorText);
         
         charText = new JTextArea(30,30);
@@ -451,25 +497,47 @@ public class Launcher implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand() == USERSEARCH){
-			String accountInfo = Main.db.getAccountInfo( Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) ) );
+			String accountID = Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) );
+			String accountInfo = Main.db.getAccountInfo( accountID );
+			
 			String[] tokens = accountInfo.split("#");
-			
+			rightPanel.setSelectedIndex(0);
 			accountUserName.setText(tokens[1]);
-			accountPassword.setText(tokens[2]);
-			accountEmail.setText(tokens[3]);
-			accountSecQuestion1.setText(tokens[4]);
-			accountSecAnswer1.setText(tokens[5]);
-			accountSecQuestion2.setText(tokens[6]);
-			accountSecAnswer2.setText(tokens[7]);
-			accountMacAddress.setText(tokens[8]);
-	        accountLastLoginTime.setText(tokens[9]);
+			if(tokens.length > 2){
+				String accountStatus = Main.db.getAccountStatus(accountID);
+				String[] values = accountStatus.split("#");
+				
+				accountPassword.setText(tokens[2]);
+				accountEmail.setText(tokens[3]);
+				accountSecQuestion1.setText(tokens[4]);
+				accountSecAnswer1.setText(tokens[5]);
+				accountSecQuestion2.setText(tokens[6]);
+				accountSecAnswer2.setText(tokens[7]);
+				accountMacAddress.setText(tokens[8]);
+		        accountLastLoginTime.setText(tokens[9]);
+		        accountLocked.setText(values[0]);
+		        accountBanned.setText(values[1]);
+			}
+			else{
+				accountPassword.setText("");
+				accountEmail.setText("");
+				accountSecQuestion1.setText("");
+				accountSecAnswer1.setText("");
+				accountSecQuestion2.setText("");
+				accountSecAnswer2.setText("");
+				accountMacAddress.setText("");
+		        accountLastLoginTime.setText("");
+		        accountLocked.setText("");
+		        accountBanned.setText("");
 			
+			}
 
 			
 		} else if(arg0.getActionCommand() == CHARSEARCH){
-			String charInfo = Main.db.getCharInfo(  characterNameSearchText.getText() );
+			String charInfo = Main.db.charSearch(  characterNameSearchText.getText() );
 			String[] tokens = charInfo.split("#");
 			String[] values = {"Search Results", "Name","Class","loggedIn","level", "gender", "health", "mana", "experience", "pointsToSpend", "xCoord", "yCoord", "location", "clanName", "strength", "dexterity", "constitution", "intelligence", "willpower", "luck", "abilities", "cooldown"};
+			rightPanel.setSelectedIndex(1);
 			charText.setText("Character Info\n\n");
 			
 			
@@ -479,10 +547,25 @@ public class Launcher implements ActionListener{
 			
 		}else if(arg0.getActionCommand() == NETWORK){
 			
+			rightPanel.setSelectedIndex(2);
+			String[] chars = Main.db.broadcastGameChanges().split("#");
+			String[] values = {"Name", "X coordinate", "Y coordinate"};
+			networkMonitorText.setText("Characters Online\n\n");
+			for( int i = 1; i < chars.length; i++){
+				String[] charInfo = chars[i].split("#");
+				for( int j = 0; j < 3; j++){
+					networkMonitorText.append(values[j] + " : " + chars[j] + "\n");
+				}
+			}
+			
+			
 		}else if(arg0.getActionCommand() == SEND){
-			//just an exsample definatly need to be replaced
-			messageDisplayArea.setText(messageDisplayArea.getText()+"\n"+ "Admin: " + messageInputText.getText());
+			
+			String msg =  "Admin#" + messageInputText.getText();
+			
+			messageDisplayArea.append( "Admin: " + messageInputText.getText() + "\n");
 			messageInputText.setText("");
+			Handler.broadcastMessage("MESSAGE#" + msg);
 		}
 		else if(arg0.getActionCommand() == ACCUSERNAME)
 		{
@@ -512,6 +595,27 @@ public class Launcher implements ActionListener{
 			
 		}else if(arg0.getActionCommand() == SECANS2){
 	
+		}else if(arg0.getActionCommand() == ACCLOCK){
+			String accountID = Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) );
+			if( accountLocked.getText().equals("1")){
+				Main.db.unlockAccount(accountID);
+				accountLocked.setText("0");
+			}
+			else{
+				Main.db.lockAccount(accountID);
+				accountLocked.setText("1");
+			}
+			
+		}else if(arg0.getActionCommand() == ACCBAN){
+			String accountID = Integer.toString(Main.db.getAccountID( accountNameSearchText.getText() ) );
+			if( accountBanned.getText().equals("1") ){
+				Main.db.unbanAccount(accountID);
+				accountBanned.setText("0");
+			}
+			else{
+				Main.db.banAccount(accountID);
+				accountBanned.setText("1");
+			}
 		}
 	}
 	
