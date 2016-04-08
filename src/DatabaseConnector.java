@@ -904,18 +904,18 @@ public class DatabaseConnector {
 		if( charClass.equals("Mage"))
 		{
 			mana = Integer.parseInt(charStatInt) * 3 ;
-			health = Integer.parseInt(con);
+			health = 20 + Integer.parseInt(con);
 		}
 		else if( charClass.equals("Rogue"))
 		{
 			mana = Integer.parseInt(charStatInt) * 2 ;
-			health = Integer.parseInt(con) * 2 ;
+			health = (int) (20 + Integer.parseInt(con) * 1.5);
 			
 		}
 		else 
 		{
 			mana = Integer.parseInt(charStatInt);
-			health = Integer.parseInt(con) * 3 ;
+			health = 20 + Integer.parseInt(con) * 2;
 		}
 		
 		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
