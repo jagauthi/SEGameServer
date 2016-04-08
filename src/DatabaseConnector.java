@@ -912,27 +912,23 @@ public class DatabaseConnector {
 								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 								+ "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		int mana =0;
-		int health =0;
+		int health = 10 + (10*Integer.parseInt(con));
 		if( charClass.equals("Mage"))
 		{
 			mana = Integer.parseInt(charStatInt) * 3 ;
-			health = 20 + Integer.parseInt(con);
 		}
 		else if( charClass.equals("Rogue"))
 		{
 			mana = Integer.parseInt(charStatInt) * 2 ;
-			health = (int) (20 + Integer.parseInt(con) * 1.5);
-			
 		}
 		else 
 		{
 			mana = Integer.parseInt(charStatInt);
-			health = 20 + Integer.parseInt(con) * 2;
 		}
 		
 		String sql = "INSERT INTO CharacterInfoTable (characterName, accountID, class, level, gender, health, mana, experience, xCoord, yCoord, "
 				+ " strength, dexterity, constitution,  intelligence, willpower, luck, abilities, cooldown) "
-				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + con + "\', \'" + mana + "\', '0', '16', '9', \'" 
+				+ "VALUES ( \'" + charName + "\', \'" + accountID +  "\', \'" + charClass + "\', '1', \'" + gender + "\', \'" + health + "\', \'" + mana + "\', '0', '31', '18', \'" 
 				+ str + "\', \'" + dex + "\', \'" + con + "\', \'" + charStatInt + "\', \'" + wil+ "\', \'" + luck + "\', \'" + initialAbilities + "\', \'" + initialCooldown +  "\');";
 		System.out.println(sql);
 		try
