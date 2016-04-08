@@ -193,10 +193,11 @@ public class Handler extends Thread {
                             writer.println(input);
                     	   }
                             break;	
-//                    case "TESTLOGOUT":
-//                    	names.remove(tokens[1]);
-//                    	System.out.println("Removed the chat name : " + tokens[1]);
-//                    	break;
+                   case "LOGOUT":
+                   	//names.remove(tokens[1]);
+                	   Main.db.logout(tokens[1]);
+                    	System.out.println("Removed from the hashMap, char name : " + tokens[1]);
+                   	break;
                     
 //                    case "FORGOTPASSWORD":
 //                    	System.out.println("calling db.createAccount() method");
