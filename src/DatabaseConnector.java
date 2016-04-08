@@ -84,6 +84,9 @@ public class DatabaseConnector {
         catch (SQLException e2) {
                e2.printStackTrace();
         }
+        if (!charsOnline.isEmpty()) {
+        	charsOnline.clear();
+        }
 	}
 	
 
@@ -160,6 +163,15 @@ public class DatabaseConnector {
 
 	//returns a String as errorCode that lets the calling method know the results of the attempt
 	//based on a convention that is yet to be determined
+	
+	public String logout(String charName){
+		
+		String errCode = "loggedOut";
+
+		charsOnline.remove(charName);
+		
+		return errCode;
+	}
 	
 	public String loginAttempt(String username, String password){
 	//check if username exists
