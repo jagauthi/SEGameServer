@@ -133,7 +133,7 @@ public class Handler extends Thread {
                     	break;
                     case "UPDATECHARPOS":
                     	System.out.println("calling db.updateCharPOS() method");
-                    	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4]);
+                    	errCode = Main.db.updateCharPosition(tokens[1],tokens[2], tokens[3],tokens[4], tokens[5]);
                     	errCode = Main.db.broadcastGameChanges();
                     	System.out.println(errCode);
                     	for (PrintWriter writer : writers) {
