@@ -1236,7 +1236,7 @@ public class DatabaseConnector {
 			synchronized (charsOnline){
 			for( PlayerHolder val : charsOnline.values() ){
 				//if( val.xCoord < x + 500 && val.xCoord > x -500 && location.equals(val.location) && val.yCoord < y + 300 && val.yCoord > y - 300 )
-					errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
+					errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.charClass;
 					
 			}
 			}
@@ -1305,7 +1305,7 @@ public class DatabaseConnector {
 		return errorCode;
 	}
 	
-	public String updateCharPosition(String charName, String xCoord, String yCoord, String location ){
+	public String updateCharPosition(String charName, String xCoord, String yCoord, String location, String direction ){
 		
 		
 		//errorCode += "#" + val.charName + " " + val.xCoord + " " + val.yCoord + " " + val.direction + " " + val.equippedItems + " " + val.sex;
@@ -1328,6 +1328,7 @@ public class DatabaseConnector {
 		charsOnline.get(charName).location = location;
 		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
 		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
+		charsOnline.get(charName).direction = Integer.parseInt(direction);
 		System.out.println("Char name : " + charName + " in location " + location);
 		return errorCode;
 	}
