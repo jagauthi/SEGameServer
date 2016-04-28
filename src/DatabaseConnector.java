@@ -598,7 +598,7 @@ public class DatabaseConnector {
         try 
         {    
             //Check to make sure that the account name does not already exist.
-            sql = "SELECT * from CharacterInfoTable where accountID = \'" + accountID + "\';";
+            sql = "SELECT * from CharacterInfoTable where accountID = \'" + accountID + "\' ORDER BY createDateTime DESC;";
             rs = stmt.executeQuery(sql);
             while( rs.next() )
             {
@@ -700,7 +700,8 @@ public class DatabaseConnector {
                 charInfo += rs.getString(rs.findColumn("luck")) + "#";
                 charInfo += rs.getString(rs.findColumn("abilities")) + "#";
                 charInfo += rs.getString(rs.findColumn("cooldown"));
-            
+                
+                
                 rs.close();
                 
             }
