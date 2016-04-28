@@ -53,6 +53,7 @@ public class Launcher implements ActionListener{
 	final static String SECANS2 = "SECANS2";
 	final static String ACCLOCK = "ACCLOCK";
 	final static String ACCBAN = "ACCBAN";
+	final static String CHARLOGOUT = "CHARLOGOUT";
 	
 	//Console Panel
 	JPanel consolePanel;
@@ -70,6 +71,7 @@ public class Launcher implements ActionListener{
     JButton characterNameSearchButton;
     JButton networkMonitorButton;
     JButton sendMessageButton;
+    JButton charLogoutButton;
     
     //Account Panel
     JPanel accountPanel;
@@ -188,6 +190,10 @@ public class Launcher implements ActionListener{
        sendMessageButton = new JButton("Send");
        sendMessageButton.setActionCommand(SEND);
        sendMessageButton.addActionListener(this);
+       
+       charLogoutButton = new JButton("Logout All Chars");
+       charLogoutButton.setActionCommand(CHARLOGOUT);
+       charLogoutButton.addActionListener(this);
         
        c.anchor = GridBagConstraints.CENTER;
        c.fill = GridBagConstraints.HORIZONTAL;
@@ -212,23 +218,29 @@ public class Launcher implements ActionListener{
        c.gridy = 1;
        leftPanel.add(characterNameSearchButton, c);
        
+       //logout button for character name
+       
+       
        c.insets = new Insets(0,0,20,0);
         c.gridx = 0;
         c.gridy = 3;
+        leftPanel.add(charLogoutButton, c);
+        
+        c.gridy = 4;
         c.gridwidth = 3;
         leftPanel.add(networkMonitorButton, c);
         c.insets = new Insets(0,0,0,0);
         
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 5;
         leftPanel.add(messageBoxLabel, c);
         
-        c.gridy = 5;
+        c.gridy = 6;
         leftPanel.add(messageScroll, c);
         
         c.gridwidth = 2;
         c.gridx = 0;
-        c.gridy = 6;
+        c.gridy = 7;
         c.fill = GridBagConstraints.BOTH;
         leftPanel.add(messageInputText, c);
         
@@ -585,6 +597,10 @@ public class Launcher implements ActionListener{
 			}
 		}
 		else if(arg0.getActionCommand() == ACCEMAIL){
+			
+		}else if(arg0.getActionCommand() == CHARLOGOUT){
+			
+			Handler.broadcastMessage("LOGOUT");
 			
 		}else if(arg0.getActionCommand() == ACCPASSWORD){
 			
