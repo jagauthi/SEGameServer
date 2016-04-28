@@ -776,7 +776,9 @@ public class DatabaseConnector {
 				
 				PlayerHolder temp = new PlayerHolder(charName, Integer.parseInt(xCoord), Integer.parseInt(yCoord), direction, location, equippedItems, sex, charClass, Integer.parseInt(level), status, Integer.parseInt(initiative) ); 
 				//PlayerHolder(String name, int x, int y, int d, String loc, String equippedItems, String sex, String charClass, int level, String status, int initiative );
-				charsOnline.put(charName, temp);
+				synchronized(charsOnline){
+					charsOnline.put(charName, temp);
+				}
 			}
 			else
 				charInfo = "charNotFound";
@@ -1325,10 +1327,12 @@ public class DatabaseConnector {
 		
 		
 		String errorCode = "attemptingCharPosUpdate";
-		charsOnline.get(charName).location = location;
-		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
-		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
-		charsOnline.get(charName).direction = Integer.parseInt(direction);
+		synchronized(charsOnline){
+			charsOnline.get(charName).location = location;
+			charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
+			charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
+			charsOnline.get(charName).direction = Integer.parseInt(direction);
+		}
 		System.out.println("Char name : " + charName + " in location " + location);
 		return errorCode;
 	}
@@ -1337,10 +1341,11 @@ public class DatabaseConnector {
 	
 	public String updateCharInfo(String charName, String loggedIn, String charClass, String level, String gender, String health, String mana, String str, String dex, String con, String charStatInt, String wil, String luck, String experience, String pointsToSpend, String xCoord, String yCoord, String location, String clanName,  String abilities, String cooldown)
 	{
-		charsOnline.get(charName).location = location;
-		charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
-		charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
-		
+		synchronized(charsOnline){
+			charsOnline.get(charName).location = location;
+			charsOnline.get(charName).xCoord = Integer.parseInt(xCoord);
+			charsOnline.get(charName).yCoord = Integer.parseInt(yCoord);
+		}
 		String errorCode = "";
 		ResultSet rs;
 		
@@ -1404,8 +1409,10 @@ public class DatabaseConnector {
 	//Test this!!
 	public String updateCharInventory(String charName, String gold, String equippedItems, String[] inventorySlots) {
 		
-		charsOnline.get(charName).equippedItems = equippedItems;
-
+		synchronized(charsOnline){
+			charsOnline.get(charName).equippedItems = equippedItems;
+		}
+		
 		String errorCode = "";
 		String sql = "UPDATE CharacterInventoryTable set equippedItems = \'" + equippedItems + "\',  gold = \'" + gold + "\' ";
 		for(int i = 0; i < 20; i++)
