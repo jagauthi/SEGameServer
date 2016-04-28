@@ -552,10 +552,11 @@ public class Launcher implements ActionListener{
 			String[] values = {"Name", "X coordinate", "Y coordinate"};
 			networkMonitorText.setText("Characters Online\n\n");
 			for( int i = 1; i < chars.length; i++){
-				String[] charInfo = chars[i].split("#");
+				String[] charInfo = chars[i].split(" ");
 				for( int j = 0; j < 3; j++){
-					networkMonitorText.append(values[j] + " : " + chars[j] + "\n");
+					networkMonitorText.append(values[j] + " : " + charInfo[j] + "\n");
 				}
+				networkMonitorText.append("\n");
 			}
 			
 			
@@ -618,68 +619,5 @@ public class Launcher implements ActionListener{
 			}
 		}
 	}
-	
-//	private void searchChars(ActionEvent evt)
-//	{
-////		loginNameText.setText("");
-////		loginPasswordText.setText("");
-////		switchCards("Create Account Panel");
-//		//this.placeHolder.setText("Test");
-//		
-//		placeHolder.setText(Main.db.getCharInfo(characterNameText.getText()) + "\n");
-//		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
-//	}
-//	
-//	private void searchAccounts(ActionEvent evt)
-//	{
-////		loginNameText.setText("");
-////		loginPasswordText.setText("");
-////		switchCards("Create Account Panel");
-//		//this.placeHolder.setText("Test");
-//		
-//		placeHolder.setText(Main.db.getAccountInfo(accountNameText.getText()) + "\n");
-//		//characterNameText.setText(Main.db.getAccountID(accountNameText.getText()) + "\n" );
-//	}
-//	
-//	private void goToCreateAccount(ActionEvent evt)
-//	{
-////		loginNameText.setText("");
-////		loginPasswordText.setText("");
-////		switchCards("Create Account Panel");
-//	}
-//	
-//	private void selectChar(ActionEvent evt)
-//	{
-//		System.out.println("Doesn't do anything yet...");
-//	}
-//	
-//	public void createNewCharacter(ActionEvent evt)
-//	{
-//		//Create new character...
-//	}
-//	
-////	public void connectToServer()
-////	{
-////		client = new ChatClient(this);
-////        try {
-////			client.start();
-////		} 
-////        catch (Exception e) {
-////			e.printStackTrace();
-////		}
-////	}
-//	
-//	public void loadCharacterInfo(String[] characterList)
-//	{
-//		//Each element in the characters array holds a line of information
-//		//about a specific character, each of the fields separated
-//		//by a space (or some other delimiter)
-//		
-//		//Starts at 1, because the first element in this list contains the string "loginSuccess"
-//		for(int x = 1; x < characterList.length; x++)
-//		{
-//			characters.add(characterList[x]);
-//		}
-//	}
-	
+
 }
